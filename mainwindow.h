@@ -22,9 +22,11 @@ private:
 
     FlightsModel & flightsModel;
 
+signals:
+
 public slots:
     void onFlightsView();
-
+    void onGenerationReady();
 };
 
 #endif // MAINWINDOW_H

@@ -26,9 +26,13 @@ private:
 
 signals:
     void updated();
+    void run();
+    void pause();
 
 public slots:
     void onGenerate();
+    void onRun();
+    void onPause();
 };
 
 #endif // FLIGHTSMODEL_H

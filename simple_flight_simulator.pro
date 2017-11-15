@@ -35,7 +35,9 @@ SOURCES += \
     point3d.cpp \
     flightpo.cpp \
     screencoordinatescalculator.cpp \
-    waypointpo.cpp
+    waypointpo.cpp \
+    simulator.cpp \
+    simulatorthread.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -49,7 +51,9 @@ HEADERS += \
     flightpo.h \
     screencoordinatescalculator.h \
     waypointpo.h \
-    constants.h
+    constants.h \
+    simulator.h \
+    simulatorthread.h
 
 FORMS += \
         mainwindow.ui

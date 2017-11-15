@@ -46,3 +46,13 @@ QMutex & FlightsModel::getLock()
 {
     return flightsLock;
 }
+
+void FlightsModel::onRun()
+{
+    emit run();
+}
+
+void FlightsModel::onPause()
+{
+    emit pause();
+}
