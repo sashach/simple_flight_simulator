@@ -1,13 +1,13 @@
 #include "mainwindow.h"
 #include <QApplication>
 
-#include "flightmodel.h"
+#include "flightsmodel.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    FlightModel flightsModel;
+    FlightsModel flightsModel;
 
     MainWindow w(flightsModel);
     w.show();

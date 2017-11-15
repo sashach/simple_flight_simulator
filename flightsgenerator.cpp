@@ -1,5 +1,6 @@
 #include "flightsgenerator.h"
 #include "flight.h"
+#include "constants.h"
 #include "waypoint.h"
 
 #include <cstdlib>
@@ -15,7 +16,7 @@ void FlightsGenerator::generate(Flight &flight, const int worldSize)
     int curY = 0;
     int curZ = 0;
 
-    const int cellStep = worldSize / (Flight::MAX_FLIGHT_POINTS);
+    const int cellStep = worldSize / MAX_FLIGHT_POINTS;
     const int coordDiff = cellStep;
 
     auto addPoint = [&flight, &curX, &curY, &curZ](const std::string & name, const bool passed = false)
@@ -35,7 +36,7 @@ void FlightsGenerator::generate(Flight &flight, const int worldSize)
     curZ = cruiseFlightLevel;
     addPoint("TOC", true); // top of climb
 
-    for(int i = 0; i < Flight::MAX_FLIGHT_POINTS - 4; ++i)
+    for(int i = 0; i < (MAX_FLIGHT_POINTS - 4); ++i)
     {
         curX += cellStep;
         curY = curX + ( -1 * coordDiff + std::rand() % coordDiff);

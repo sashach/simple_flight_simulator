@@ -1,20 +1,17 @@
 #include "flight.h"
+#include "constants.h"
 
 Flight::Flight(QObject *parent) :
-    QObject(parent),
-    x(0),
-    y(0),
-    h(0)
+    QObject(parent)
 {
     wayPoints.reserve(MAX_FLIGHT_POINTS);
 }
 
-Flight::Flight(const Flight &other): QObject(other.parent())
+Flight::Flight(const Flight &other):
+    QObject(other.parent())
 {
     wayPoints = other.wayPoints;
-    x = other.x;
-    y = other.y;
-    h = other.h;
+    coordinates = other.coordinates;
 }
 
 const Flight & Flight::operator = (const Flight & other)
@@ -23,9 +20,7 @@ const Flight & Flight::operator = (const Flight & other)
     {
         wayPoints.clear();
         wayPoints = other.wayPoints;
-        x = other.x;
-        y = other.y;
-        h = other.h;
+        coordinates = other.coordinates;
     }
     return *this;
 }
@@ -40,24 +35,12 @@ const QVector<WayPoint> & Flight::getWayPoints() const
     return wayPoints;
 }
 
-void Flight::updateFlightPosition(const int _x, const int _y, const int _h)
+void Flight::updateCoordinates(const int x, const int y, const int h)
 {
-    x = _x;
-    y = _y;
-    h = _h;
+    coordinates.update(x, y, h);
 }
 
-int Flight::getX() const
+const Point3d & Flight::getCoordinates() const
 {
-    return x;
-}
-
-int Flight::getY() const
-{
-    return y;
-}
-
-int Flight::getH() const
-{
-    return h;
+    return coordinates;
 }

@@ -26,21 +26,30 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    flightmodel.cpp \
     flight.cpp \
     flightsgenerator.cpp \
     waypoint.cpp \
     flightsview.cpp \
-    flightspomanager.cpp
+    flightsviewmodel.cpp \
+    flightsmodel.cpp \
+    point3d.cpp \
+    flightpo.cpp \
+    screencoordinatescalculator.cpp \
+    waypointpo.cpp
 
 HEADERS += \
         mainwindow.h \
-    flightmodel.h \
     flight.h \
     flightsgenerator.h \
     waypoint.h \
     flightsview.h \
-    flightspomanager.h
+    flightsviewmodel.h \
+    flightsmodel.h \
+    point3d.h \
+    flightpo.h \
+    screencoordinatescalculator.h \
+    waypointpo.h \
+    constants.h
 
 FORMS += \
         mainwindow.ui

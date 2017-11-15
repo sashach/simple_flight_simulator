@@ -1,41 +1,28 @@
 #include "flightsview.h"
-#include "flightmodel.h"
-#include "flight.h"
+#include "flightpo.h"
+#include "constants.h"
+#include "waypointpo.h"
 
 #include <QPainter>
 
-static const int LINES_WIDTH = 2;
-static const int POINTS_WIDTH = 5;
-static const int FLIGHT_CROSS_SIZE = 5;
-static const int POINT_NAMES_OFFSET = 10;
 static const QBrush BACKGROUND_BRUSH = QBrush(QColor(200, 200, 200));
-static const QPen PEN_PASSED_ROUTE = QPen(QColor(20, 20, 90), LINES_WIDTH);
-static const QPen PEN_NON_PASSED_ROUTE = QPen(QColor(90, 90, 220), LINES_WIDTH);
-static const QPen PEN_POINTS = QPen(QColor(240, 240, 70), POINTS_WIDTH);
+static const QPen PEN_PASSED_ROUTE = QPen(QColor(20, 20, 90), FlightsView::LINES_WIDTH);
+static const QPen PEN_NON_PASSED_ROUTE = QPen(QColor(90, 90, 220), FlightsView::LINES_WIDTH);
+static const QPen PEN_POINTS = QPen(QColor(240, 240, 70), FlightsView::POINTS_WIDTH);
 static const QPen PEN_POINTS_NAMES = QPen(QColor(240, 240, 70));
-static const QPen PEN_FLIGHT = QPen(QColor(20, 180, 40), LINES_WIDTH);
+static const QPen PEN_FLIGHT = QPen(QColor(20, 180, 40), FlightsView::LINES_WIDTH);
 
-FlightsView::FlightsView(FlightModel &model, QWidget *parent) :
+FlightsView::FlightsView(FlightsModel &model, QWidget *parent) :
     QDialog(parent),
-    flightsModel(model),
+    flightsPO(model),
     drawingWidth(0),
-    drawingHeight(0),
-    scale(0.0)
+    drawingHeight(0)
 {
     setWindowTitle("Flights View");
-}
+    flightsPO.onFlightsUpdated();
 
-void FlightsView::onModelUpdated()
-{
-    flightsPO.clearFlights();
-
-    const QVector<Flight> & flights = flightsModel.getFlights();
-    for(auto it = flights.begin(); it != flights.end(); ++it)
-    {
-        flightsPO.addFlight(*it);
-    }
-
-    update();
+    connect(&flightsPO, FlightsViewModel::flightsChanged, this, onModelUpdated);
+    connect(this, sizeChanged, &flightsPO, FlightsViewModel::onViewSizeChanged);
 }
 
 void FlightsView::resizeEvent(QResizeEvent*)
@@ -43,9 +30,12 @@ void FlightsView::resizeEvent(QResizeEvent*)
     drawingWidth = width();
     drawingHeight = height();
 
-    scale = 1.0 * drawingWidth / FlightModel::WORLD_SIZE;
+    emit sizeChanged(drawingWidth, drawingHeight);
+}
 
-    onModelUpdated();
+void FlightsView::onModelUpdated()
+{
+    update();
 }
 
 void FlightsView::paintEvent(QPaintEvent *)
@@ -62,18 +52,18 @@ void FlightsView::paintEvent(QPaintEvent *)
 
 void FlightsView::drawLinesPoints(QPainter & painter)
 {
-    const QVector<Flight> & flights = flightsModel.getFlights();
+    const QVector<FlightPO> & flights = flightsPO.getFlights();
 
     QVector <QPoint> points;
     QVector <QLine> passedLines, nonPassedLines;
 
-    points.reserve(Flight::MAX_FLIGHT_POINTS * flights.size());
+    points.reserve(MAX_FLIGHT_POINTS * flights.size());
     passedLines.reserve(points.capacity() / 2);
     nonPassedLines.reserve(points.capacity() / 2);
 
     for(auto flightIt = flights.begin(); flightIt != flights.end(); ++flightIt)
     {
-        const QVector<WayPoint> & wayPoints = flightIt->getWayPoints();
+        const QVector<WayPointPO> & wayPoints = flightIt->getWayPoints();
 
         bool firstPoint = true;
         int prevX = 0, prevY = 0;
@@ -81,8 +71,8 @@ void FlightsView::drawLinesPoints(QPainter & painter)
 
         for(auto pointIt = wayPoints.begin(); pointIt != wayPoints.end(); ++pointIt)
         {
-            int x = getScreenX(pointIt->getX());
-            int y = getScreenY(pointIt->getY());
+            int x = pointIt->getX();
+            int y = pointIt->getY();
             points.push_back(QPoint(x, y));
 
             if(!firstPoint)
@@ -117,14 +107,14 @@ void FlightsView::drawPointsNames(QPainter & painter)
 {
     painter.setPen(PEN_POINTS_NAMES);
 
-    const QVector<Flight> & flights = flightsModel.getFlights();
+    const QVector<FlightPO> & flights = flightsPO.getFlights();
     for(auto flightIt = flights.begin(); flightIt != flights.end(); ++flightIt)
     {
-        const QVector<WayPoint> & wayPoints = flightIt->getWayPoints();
+        const QVector<WayPointPO> & wayPoints = flightIt->getWayPoints();
         for(auto pointIt = wayPoints.begin(); pointIt != wayPoints.end(); ++pointIt)
         {
-            int x = POINT_NAMES_OFFSET + getScreenX(pointIt->getX());
-            int y = POINT_NAMES_OFFSET + getScreenY(pointIt->getY());
+            int x = POINT_NAMES_OFFSET + pointIt->getX();
+            int y = POINT_NAMES_OFFSET + pointIt->getY();
 
             painter.drawText(QPoint(x, y), pointIt->getName());
         }
@@ -133,7 +123,7 @@ void FlightsView::drawPointsNames(QPainter & painter)
 
 void FlightsView::drawFlights(QPainter & painter)
 {
-    const QVector<Flight> & flights = flightsModel.getFlights();
+    const QVector<FlightPO> & flights = flightsPO.getFlights();
 
     QVector <QLine> flightsSymbols;
     flightsSymbols.reserve(2 * flights.size());
@@ -152,12 +142,3 @@ void FlightsView::drawFlights(QPainter & painter)
 }
 
 
-int FlightsView::getScreenX(const int relX)
-{
-    return relX * scale;
-}
-
-int FlightsView::getScreenY(const int relY)
-{
-    return drawingHeight - relY * scale;
-}

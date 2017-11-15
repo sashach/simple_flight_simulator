@@ -1,19 +1,14 @@
 #include "waypoint.h"
 
 WayPoint::WayPoint():
-    x(0),
-    y(0),
-    z(0),
     passed(false),
     mandatory(true)
 {
 
 }
 
-WayPoint::WayPoint(const int _x, const int _y, const int _z):
-    x(_x),
-    y(_y),
-    z(_z),
+WayPoint::WayPoint(const int x, const int y, const int h):
+    coordinates(x, y, h),
     passed(false),
     mandatory(true)
 {
@@ -21,9 +16,7 @@ WayPoint::WayPoint(const int _x, const int _y, const int _z):
 }
 
 WayPoint::WayPoint(const WayPoint & other):
-    x(other.x),
-    y(other.y),
-    z(other.z),
+    coordinates(other.coordinates),
     passed(other.passed),
     mandatory(other.mandatory),
     name(other.name)
@@ -35,9 +28,7 @@ const WayPoint & WayPoint::operator = (const WayPoint & other)
 {
     if(this != &other)
     {
-        x = other.x;
-        y = other.y;
-        z = other.z;
+        coordinates = other.coordinates;
         passed = other.passed;
         mandatory = other.mandatory;
         name = other.name;
@@ -45,19 +36,9 @@ const WayPoint & WayPoint::operator = (const WayPoint & other)
     return *this;
 }
 
-int WayPoint::getX() const
+const Point3d & WayPoint::getCoordinates() const
 {
-    return x;
-}
-
-int WayPoint::getY() const
-{
-    return y;
-}
-
-int WayPoint::getZ() const
-{
-    return z;
+    return coordinates;
 }
 
 bool WayPoint::isPassed() const
@@ -75,12 +56,12 @@ void WayPoint::setPassed(const bool _passed)
     passed = _passed;
 }
 
-const QString &WayPoint::getName() const
+const std::string & WayPoint::getName() const
 {
     return name;
 }
 
 void WayPoint::setName(const std::string & _name)
 {
-    name = QString(_name.c_str());
+    name = _name;
 }

@@ -7,20 +7,20 @@ namespace Ui {
 class MainWindow;
 }
 
-class FlightModel;
+class FlightsModel;
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(FlightModel & model, QWidget *parent = 0);
+    explicit MainWindow(FlightsModel & model, QWidget *parent = 0);
     ~MainWindow();
 
 private:
     Ui::MainWindow *ui;
 
-    FlightModel & flightsModel;
+    FlightsModel & flightsModel;
 
 public slots:
     void onFlightsView();

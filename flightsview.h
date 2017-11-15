@@ -3,35 +3,39 @@
 
 #include <QDialog>
 
-#include "flightspomanager.h"
+#include "flightsviewmodel.h"
 
-class FlightModel;
+class FlightsModel;
 
 class FlightsView : public QDialog
 {
     Q_OBJECT
 public:
-    explicit FlightsView(FlightModel & model, QWidget *parent = nullptr);
+    explicit FlightsView(FlightsModel & model, QWidget *parent = nullptr);
+
+    enum
+    {
+        LINES_WIDTH = 2,
+        POINTS_WIDTH = 5,
+        FLIGHT_CROSS_SIZE = 5,
+        POINT_NAMES_OFFSET = 10
+    };
 
 protected:
     void paintEvent(QPaintEvent *) override;
     void resizeEvent(QResizeEvent*) override;
 
 private:
-    FlightsPOManager flightsPO;
-    FlightModel & flightsModel;
+    FlightsViewModel flightsPO;
     int drawingWidth;
     int drawingHeight;
-    double scale;
-
-    int getScreenX(const int relX);
-    int getScreenY(const int relY);
 
     void drawLinesPoints(QPainter & painter);
     void drawPointsNames(QPainter & painter);
     void drawFlights(QPainter & painter);
 
 signals:
+    void sizeChanged(const int width, const int height);
 
 public slots:
     void onModelUpdated();

@@ -1,6 +1,7 @@
 #ifndef FLIGHT_H
 #define FLIGHT_H
 
+#include "point3d.h"
 #include "waypoint.h"
 
 #include <QObject>
@@ -15,25 +16,16 @@ public:
 
     const Flight & operator = (const Flight & other);
 
-    enum
-    {
-        MAX_FLIGHT_POINTS = 12
-    };
-
     void addWayPoint(const WayPoint & wayPoint);
     const QVector<WayPoint> & getWayPoints() const;
 
-    void updateFlightPosition(const int _x, const int _y, const int _h);
+    void updateCoordinates(const int x, const int y, const int h);
 
-    int getX() const;
-    int getY() const;
-    int getH() const;
+    const Point3d & getCoordinates() const;
 
 private:
     QVector<WayPoint> wayPoints;
-    int x;
-    int y;
-    int h;
+    Point3d coordinates;
 
 signals:
 

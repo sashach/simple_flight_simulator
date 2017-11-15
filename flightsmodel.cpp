@@ -1,47 +1,48 @@
-#include "flightmodel.h"
+#include "flightsmodel.h"
 #include "flightsgenerator.h"
+#include "constants.h"
 
 #include <QMutexLocker>
 
 #include <iostream>
 
-FlightModel::FlightModel(QObject *parent):
+FlightsModel::FlightsModel(QObject *parent):
       QObject(parent)
 {
 
 }
 
-void FlightModel::clearFlights()
+void FlightsModel::clearFlights()
 {
     QMutexLocker flightsLocker(&flightsLock);
     flights.clear();
 }
 
-void FlightModel::generateFlights()
+void FlightsModel::generateFlights()
 {
     FlightsGenerator flightsGenerator;
     Flight flight;
     flightsGenerator.generate(flight, WORLD_SIZE);
 
-    flight.updateFlightPosition(100, 100, 5000);
+    flight.updateCoordinates(100, 100, 5000);
 
     QMutexLocker flightsLocker(&flightsLock);
     flights.push_back(flight);
 }
 
-void FlightModel::onGenerate()
+void FlightsModel::onGenerate()
 {
     clearFlights();
     generateFlights();
     emit updated();
 }
 
-const QVector<Flight> &FlightModel::getFlights() const
+const QVector<Flight> &FlightsModel::getFlights() const
 {
     return flights;
 }
 
-QMutex & FlightModel::getLock()
+QMutex & FlightsModel::getLock()
 {
     return flightsLock;
 }
