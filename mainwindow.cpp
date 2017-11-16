@@ -12,12 +12,11 @@ MainWindow::MainWindow(FlightsModel &model, QWidget *parent) :
 {
     ui->setupUi(this);
 
-    connect(ui->generateButton, QPushButton::pressed, &flightsModel, FlightsModel::onGenerate);
+    connect(ui->generateButton, QPushButton::pressed, this, MainWindow::onGenerate);
     connect(ui->flightsViewButton, QPushButton::pressed, this, MainWindow::onFlightsView);
-    connect(&flightsModel, FlightsModel::updated, this, MainWindow::onGenerationReady);
 
-    connect(ui->runButton, QPushButton::pressed, &flightsModel, FlightsModel::onRun);
-    connect(ui->pauseButton, QPushButton::pressed, &flightsModel, FlightsModel::onPause);
+    connect(ui->runButton, QPushButton::pressed, this, MainWindow::onRun);
+    connect(ui->pauseButton, QPushButton::pressed, this, MainWindow::onPause);
 }
 
 MainWindow::~MainWindow()
@@ -36,6 +35,23 @@ void MainWindow::onFlightsView()
 void MainWindow::onGenerationReady()
 {
     ui->runButton->setEnabled(true);
-    ui->pauseButton->setEnabled(true);
+    ui->pauseButton->setEnabled(false);
     ui->speedGroupBox->setEnabled(true);
+}
+
+void MainWindow::onRun()
+{
+    ui->runButton->setEnabled(false);
+    ui->pauseButton->setEnabled(true);
+    emit run();
+}
+
+void MainWindow::onPause()
+{
+    emit pause();
+}
+
+void MainWindow::onGenerate()
+{
+    emit generate();
 }

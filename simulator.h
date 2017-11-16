@@ -2,23 +2,37 @@
 #define SIMULATOR_H
 
 #include <QObject>
+#include <QMutex>
+
+class FlightsModel;
+class Flight;
 
 class Simulator : public QObject
 {
     Q_OBJECT
 public:
-    explicit Simulator(QObject *parent = nullptr);
+    explicit Simulator(FlightsModel & model, QObject *parent = nullptr);
 
     void doSomeWork();
 
+private:
+    FlightsModel & flightsModel;
+
+    QMutex controlLock;
+    bool enabled;
+    bool paused;
+
+    void processFlights();
+    void processOneFlight(Flight & flight);
+
 signals:
-    void finished();
-    void error(QString err);
+    void start();
 
 public slots:
     void process();
-    void onRun();
+    void onStart();
     void onPause();
+    void onStop();
 
 };
 

@@ -5,6 +5,7 @@ FlightsViewModel::FlightsViewModel(FlightsModel &model, QObject *parent) :
     QObject(parent),
     flightsModel(model)
 {
+    connect(&flightsModel, FlightsModel::ready, this, onFlightsUpdated);
     connect(&flightsModel, FlightsModel::updated, this, onFlightsUpdated);
 }
 

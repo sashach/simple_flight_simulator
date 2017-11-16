@@ -23,10 +23,16 @@ private:
     FlightsModel & flightsModel;
 
 signals:
+    void generate();
+    void run();
+    void pause();
 
 public slots:
     void onFlightsView();
     void onGenerationReady();
+    void onGenerate();
+    void onRun();
+    void onPause();
 };
 
 #endif // MAINWINDOW_H

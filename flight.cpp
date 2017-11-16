@@ -40,6 +40,11 @@ void Flight::updateCoordinates(const int x, const int y, const int h)
     coordinates.update(x, y, h);
 }
 
+void Flight::updateCoordinates(const Point3d & coord)
+{
+    coordinates = coord;
+}
+
 const Point3d & Flight::getCoordinates() const
 {
     return coordinates;

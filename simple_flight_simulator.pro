@@ -37,7 +37,8 @@ SOURCES += \
     screencoordinatescalculator.cpp \
     waypointpo.cpp \
     simulator.cpp \
-    simulatorthread.cpp
+    simulatorthread.cpp \
+    signalsmanager.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -53,7 +54,8 @@ HEADERS += \
     waypointpo.h \
     constants.h \
     simulator.h \
-    simulatorthread.h
+    simulatorthread.h \
+    signalsmanager.h
 
 FORMS += \
         mainwindow.ui

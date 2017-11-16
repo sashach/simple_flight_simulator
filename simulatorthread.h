@@ -17,8 +17,14 @@ private:
     FlightsModel & flightsModel;
 
 signals:
+    void start();
+    void pause();
+    void update();
 
 public slots:
+    void onStart();
+    void onPause();
+    void onUpdate();
 };
 
 #endif // SIMULATORTHREAD_H

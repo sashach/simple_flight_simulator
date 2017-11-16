@@ -19,29 +19,28 @@ void FlightsGenerator::generate(Flight &flight, const int worldSize)
     const int cellStep = worldSize / MAX_FLIGHT_POINTS;
     const int coordDiff = cellStep;
 
-    auto addPoint = [&flight, &curX, &curY, &curZ](const std::string & name, const bool passed = false)
+    auto addPoint = [&flight, &curX, &curY, &curZ](const std::string & name)
     {
         WayPoint point(curX, curY, curZ);
-        point.setPassed(passed);
         point.setName(name);
         flight.addWayPoint(point);
     };
 
-    addPoint("TOFF", true); // take off
+    addPoint("TOFF"); // take off
 
     const int cruiseFlightLevel = 10000;
 
     curX += cellStep;
     curY += cellStep;
     curZ = cruiseFlightLevel;
-    addPoint("TOC", true); // top of climb
+    addPoint("TOC"); // top of climb
 
     for(int i = 0; i < (MAX_FLIGHT_POINTS - 4); ++i)
     {
         curX += cellStep;
         curY = curX + ( -1 * coordDiff + std::rand() % coordDiff);
         curZ = cruiseFlightLevel + ( -500 + std::rand() % 1000);
-        addPoint("PT" + std::to_string(i), i < 4); // enroute
+        addPoint("PT" + std::to_string(i)); // enroute
     }
 
     curX += cellStep;

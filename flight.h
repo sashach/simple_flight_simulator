@@ -20,6 +20,7 @@ public:
     const QVector<WayPoint> & getWayPoints() const;
 
     void updateCoordinates(const int x, const int y, const int h);
+    void updateCoordinates(const Point3d & coord);
 
     const Point3d & getCoordinates() const;
 

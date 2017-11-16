@@ -14,6 +14,7 @@ public:
     explicit FlightsModel(QObject *parent = nullptr);
 
     const QVector<Flight> & getFlights() const;
+    QVector<Flight> & getFlights();
 
     QMutex & getLock();
 
@@ -26,13 +27,13 @@ private:
 
 signals:
     void updated();
+    void ready();
     void run();
     void pause();
 
 public slots:
     void onGenerate();
-    void onRun();
-    void onPause();
+    void onUpdate();
 };
 
 #endif // FLIGHTSMODEL_H

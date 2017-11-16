@@ -24,7 +24,7 @@ void FlightsModel::generateFlights()
     Flight flight;
     flightsGenerator.generate(flight, WORLD_SIZE);
 
-    flight.updateCoordinates(100, 100, 5000);
+    flight.updateCoordinates(0, 0, 5000);
 
     QMutexLocker flightsLocker(&flightsLock);
     flights.push_back(flight);
@@ -34,10 +34,15 @@ void FlightsModel::onGenerate()
 {
     clearFlights();
     generateFlights();
-    emit updated();
+    emit ready();
 }
 
 const QVector<Flight> &FlightsModel::getFlights() const
+{
+    return flights;
+}
+
+QVector<Flight> &FlightsModel::getFlights()
 {
     return flights;
 }
@@ -47,12 +52,7 @@ QMutex & FlightsModel::getLock()
     return flightsLock;
 }
 
-void FlightsModel::onRun()
+void FlightsModel::onUpdate()
 {
-    emit run();
-}
-
-void FlightsModel::onPause()
-{
-    emit pause();
+    emit updated();
 }

@@ -4,31 +4,76 @@
 #include <iostream>
 #include <unistd.h>
 
-#include <QThread>
 
-Simulator::Simulator(QObject *parent) :
-    QObject(parent)
+Simulator::Simulator(FlightsModel &model, QObject *parent) :
+    QObject(parent),
+    flightsModel(model),
+    enabled(false),
+    paused(false)
 {
 }
 
 void Simulator::process()
 {
-    for(int i = 0; i < 10; ++i)
+    while(true)
     {
-        std::cout << "Hello " << i << std::endl;
-        usleep(500000);
-//        QThread::sleep(1);
-    }
+        {
+            QMutexLocker controlLocker(&controlLock);
 
-    emit finished();
+            if(!enabled)
+            {
+                break;
+            }
+            if(paused)
+            {
+                usleep(100000);
+                continue;
+            }
+        }
+
+        processFlights();
+
+        usleep(500000);
+    }
 }
 
-void Simulator::onRun()
+void Simulator::onStart()
 {
-    std::cout << "Run" << std::endl;
+    enabled = true;
+    paused = false;
+
+    //emit start();
+    process();
 }
 
 void Simulator::onPause()
 {
-    std::cout << "Pause" << std::endl;
+    QMutexLocker controlLocker(&controlLock);
+    paused = !paused;
+}
+
+void Simulator::onStop()
+{
+    QMutexLocker controlLocker(&controlLock);
+    enabled = false;
+}
+
+void Simulator::processFlights()
+{
+    QMutexLocker flightsModelLocker(&flightsModel.getLock());
+
+    QVector<Flight> & flights = flightsModel.getFlights();
+    for(auto it = flights.begin(); it != flights.end(); ++it)
+    {
+        processOneFlight(*it);
+    }
+
+    flightsModel.onUpdate();
+}
+
+void Simulator::processOneFlight(Flight & flight)
+{
+    Point3d coordinates = flight.getCoordinates();
+    coordinates.update(coordinates.getX() + 10, coordinates.getY() + 10, coordinates.getH());
+    flight.updateCoordinates(coordinates);
 }
