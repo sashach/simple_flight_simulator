@@ -18,15 +18,19 @@ public:
 
     void addWayPoint(const WayPoint & wayPoint);
     const QVector<WayPoint> & getWayPoints() const;
+    QVector<WayPoint> & getWayPoints();
 
     void updateCoordinates(const int x, const int y, const int h);
     void updateCoordinates(const Point3d & coord);
 
     const Point3d & getCoordinates() const;
 
+    int getSpeed() const;
+
 private:
     QVector<WayPoint> wayPoints;
     Point3d coordinates;
+    int speed;
 
 signals:
 

@@ -20,11 +20,13 @@ signals:
     void start();
     void pause();
     void update();
+    void stop();
 
 public slots:
     void onStart();
     void onPause();
     void onUpdate();
+    void onStop();
 };
 
 #endif // SIMULATORTHREAD_H

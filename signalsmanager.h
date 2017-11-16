@@ -15,6 +15,7 @@ public:
 
     void connectObjects(MainWindow & mainWindow, FlightsModel & flightsModel);
     void connectObjects(MainWindow & mainWindow, SimulatorThread & simulator);
+    void connectObjects(FlightsModel & flightsModel, SimulatorThread & simulator);
 
 signals:
 

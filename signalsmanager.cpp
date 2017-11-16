@@ -21,3 +21,8 @@ void SignalsManager::connectObjects(MainWindow & mainWindow, SimulatorThread & s
     connect(&mainWindow, MainWindow::run, &simulator, SimulatorThread::onStart);
     connect(&mainWindow, MainWindow::pause, &simulator, SimulatorThread::onPause, Qt::DirectConnection);
 }
+
+void SignalsManager::connectObjects(FlightsModel & flightsModel, SimulatorThread & simulator)
+{
+    connect(&flightsModel, FlightsModel::ready, &simulator, SimulatorThread::onStop, Qt::DirectConnection);
+}

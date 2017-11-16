@@ -21,13 +21,13 @@ void SimulatorThread::run()
     simulator->moveToThread(simulatorThread);
 
     connect(this, SimulatorThread::start, simulator, Simulator::onStart);
+    connect(this, SimulatorThread::stop, simulator, Simulator::onStop);
 
     simulatorThread->start();
 }
 
 void SimulatorThread::onStart()
 {
-    run();
     emit start();
 }
 
@@ -39,4 +39,9 @@ void SimulatorThread::onPause()
 void SimulatorThread::onUpdate()
 {
     emit update();
+}
+
+void SimulatorThread::onStop()
+{
+    emit stop();
 }

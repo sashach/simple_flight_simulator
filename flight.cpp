@@ -2,7 +2,8 @@
 #include "constants.h"
 
 Flight::Flight(QObject *parent) :
-    QObject(parent)
+    QObject(parent),
+    speed(GRID_SIZE)
 {
     wayPoints.reserve(MAX_FLIGHT_POINTS);
 }
@@ -12,6 +13,7 @@ Flight::Flight(const Flight &other):
 {
     wayPoints = other.wayPoints;
     coordinates = other.coordinates;
+    speed = other.speed;
 }
 
 const Flight & Flight::operator = (const Flight & other)
@@ -21,6 +23,7 @@ const Flight & Flight::operator = (const Flight & other)
         wayPoints.clear();
         wayPoints = other.wayPoints;
         coordinates = other.coordinates;
+        speed = other.speed;
     }
     return *this;
 }
@@ -31,6 +34,11 @@ void Flight::addWayPoint(const WayPoint & wayPoint)
 }
 
 const QVector<WayPoint> & Flight::getWayPoints() const
+{
+    return wayPoints;
+}
+
+QVector<WayPoint> & Flight::getWayPoints()
 {
     return wayPoints;
 }
@@ -48,4 +56,9 @@ void Flight::updateCoordinates(const Point3d & coord)
 const Point3d & Flight::getCoordinates() const
 {
     return coordinates;
+}
+
+int Flight::getSpeed() const
+{
+    return speed;
 }

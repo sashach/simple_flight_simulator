@@ -21,9 +21,15 @@ private:
     QMutex controlLock;
     bool enabled;
     bool paused;
+    int simulationTime;
 
     void processFlights();
     void processOneFlight(Flight & flight);
+
+    enum
+    {
+        POINTS_PASSED_THRESHOLD = 10
+    };
 
 signals:
     void start();
