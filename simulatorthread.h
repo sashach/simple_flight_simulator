@@ -21,12 +21,18 @@ signals:
     void pause();
     void update();
     void stop();
+    void doubleSpeed();
+    void halfSpeed();
+    void normalSpeed();
 
 public slots:
     void onStart();
     void onPause();
     void onUpdate();
     void onStop();
+    void onDoubleSpeed();
+    void onHalfSpeed();
+    void onNormalSpeed();
 };
 
 #endif // SIMULATORTHREAD_H

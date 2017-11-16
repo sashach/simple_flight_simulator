@@ -22,6 +22,7 @@ private:
     bool enabled;
     bool paused;
     int simulationTime;
+    double simulationSpeed;
 
     void processFlights();
     void processOneFlight(Flight & flight);
@@ -39,6 +40,9 @@ public slots:
     void onStart();
     void onPause();
     void onStop();
+    void onDoubleSpeed();
+    void onHalfSpeed();
+    void onNormalSpeed();
 
 };
 

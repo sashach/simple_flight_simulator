@@ -26,6 +26,9 @@ signals:
     void generate();
     void run();
     void pause();
+    void doubleSpeed();
+    void halfSpeed();
+    void normalSpeed();
 
 public slots:
     void onFlightsView();
@@ -33,6 +36,9 @@ public slots:
     void onGenerate();
     void onRun();
     void onPause();
+    void onDoubleSpeed();
+    void onHalfSpeed();
+    void onNormalSpeed();
 };
 
 #endif // MAINWINDOW_H

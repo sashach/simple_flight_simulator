@@ -87,14 +87,14 @@
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QRadioButton" name="speedHalfButton">
+        <widget class="QRadioButton" name="halfSpeedButton">
          <property name="text">
           <string>x0.5</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QRadioButton" name="speedNormalButton">
+        <widget class="QRadioButton" name="normalSpeedButton">
          <property name="text">
           <string>x1</string>
          </property>
@@ -104,7 +104,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QRadioButton" name="speedDoubleButton">
+        <widget class="QRadioButton" name="doubleSpeedButton">
          <property name="text">
           <string>x2</string>
          </property>
@@ -112,9 +112,6 @@
        </item>
       </layout>
      </widget>
-     <zorder>speedHalfButton</zorder>
-     <zorder>speedNormalButton</zorder>
-     <zorder>horizontalLayoutWidget</zorder>
     </widget>
     <widget class="QPushButton" name="pauseButton">
      <property name="enabled">

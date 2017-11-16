@@ -4,13 +4,15 @@
 #include <iostream>
 #include <unistd.h>
 
+#include <QDateTime>
 
 Simulator::Simulator(FlightsModel &model, QObject *parent) :
     QObject(parent),
     flightsModel(model),
     enabled(false),
     paused(false),
-    simulationTime(0)
+    simulationTime(0),
+    simulationSpeed(1.0)
 {
 }
 
@@ -43,6 +45,7 @@ void Simulator::onStart()
 {
     enabled = true;
     paused = false;
+    simulationSpeed = 1.0;
 
     process();
 }
@@ -74,6 +77,12 @@ void Simulator::processOneFlight(Flight & flight)
 {
     Point3d coordinates = flight.getCoordinates();
 
+    double currentSimulationSpeed = 1.0;
+    {
+        QMutexLocker controlLocker(&controlLock);
+        currentSimulationSpeed = simulationSpeed;
+    }
+
     QVector<WayPoint> & wayPoints = flight.getWayPoints();
     for(auto it = wayPoints.begin(); it != wayPoints.end(); ++it)
     {
@@ -83,13 +92,6 @@ void Simulator::processOneFlight(Flight & flight)
             int dY = abs(it->getCoordinates().getY() - coordinates.getY());
             double dist = sqrt(dX * dX + dY * dY);
 
-//            if(dX < 0 || dY < 0)
-//            {
-//                it->setPassed(true);
-//                dX *= -1;
-//                dY *= -1;
-//            }
-//            else
             if(dist < POINTS_PASSED_THRESHOLD)
             {
                 it->setPassed(true);
@@ -98,19 +100,40 @@ void Simulator::processOneFlight(Flight & flight)
                 break;
             }
 
-            double k = flight.getSpeed() / dist;
+            double timeDiff = flight.getLastUpdateTime().msecsTo(QDateTime::currentDateTime()) / 1000.0;
 
-            std::cout << "================================" << std::endl;
-            std::cout << "point " << it->getName() << " dist " << dist << " K " << k << std::endl;
-            std::cout << "\t flight x:y " << coordinates.getX() << ":" << coordinates.getY()
+            double k = currentSimulationSpeed * timeDiff * flight.getSpeed() / dist;
+
+            std::cout << "flight x:y " << coordinates.getX() << ":" << coordinates.getY()
+                      << " wpt x:y " << it->getCoordinates().getX() << ":" << it->getCoordinates().getY()
+                      << " dist " << dist
+                      << " k " << k << " timeDiff " << timeDiff << " spd " << currentSimulationSpeed
                       << " dx:dy " << dX << ":" << dY << std::endl;
-            std::cout << "\t wpt x:y " << it->getCoordinates().getX() << ":" << it->getCoordinates().getY() << std::endl;
 
             coordinates.update(coordinates.getX() + k * dX, coordinates.getY() + k * dY, coordinates.getH());
-            std::cout << "\t upd flight x:y " << coordinates.getX() << ":" << coordinates.getY() << std::endl;
+            std::cout << "updated flight x:y " << coordinates.getX() << ":" << coordinates.getY() << std::endl;
+
             break;
         }
     }
 
     flight.updateCoordinates(coordinates);
+}
+
+void Simulator::onDoubleSpeed()
+{
+    QMutexLocker controlLocker(&controlLock);
+    simulationSpeed = 2.0;
+}
+
+void Simulator::onHalfSpeed()
+{
+    QMutexLocker controlLocker(&controlLock);
+    simulationSpeed = 0.5;
+}
+
+void Simulator::onNormalSpeed()
+{
+    QMutexLocker controlLocker(&controlLock);
+    simulationSpeed = 1.0;
 }

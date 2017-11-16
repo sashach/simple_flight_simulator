@@ -20,6 +20,9 @@ void SignalsManager::connectObjects(MainWindow & mainWindow, SimulatorThread & s
 {
     connect(&mainWindow, MainWindow::run, &simulator, SimulatorThread::onStart);
     connect(&mainWindow, MainWindow::pause, &simulator, SimulatorThread::onPause, Qt::DirectConnection);
+    connect(&mainWindow, MainWindow::doubleSpeed, &simulator, SimulatorThread::onDoubleSpeed, Qt::DirectConnection);
+    connect(&mainWindow, MainWindow::halfSpeed, &simulator, SimulatorThread::onHalfSpeed, Qt::DirectConnection);
+    connect(&mainWindow, MainWindow::normalSpeed, &simulator, SimulatorThread::onNormalSpeed, Qt::DirectConnection);
 }
 
 void SignalsManager::connectObjects(FlightsModel & flightsModel, SimulatorThread & simulator)

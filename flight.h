@@ -6,6 +6,7 @@
 
 #include <QObject>
 #include <QVector>
+#include <QDateTime>
 
 class Flight : public QObject
 {
@@ -27,10 +28,13 @@ public:
 
     int getSpeed() const;
 
+    QDateTime getLastUpdateTime();
+
 private:
     QVector<WayPoint> wayPoints;
     Point3d coordinates;
     int speed;
+    QDateTime lastUpdateTime;
 
 signals:
 

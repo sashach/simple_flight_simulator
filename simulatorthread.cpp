@@ -22,6 +22,9 @@ void SimulatorThread::run()
 
     connect(this, SimulatorThread::start, simulator, Simulator::onStart);
     connect(this, SimulatorThread::stop, simulator, Simulator::onStop);
+    connect(this, SimulatorThread::doubleSpeed, simulator, Simulator::onDoubleSpeed, Qt::DirectConnection);
+    connect(this, SimulatorThread::halfSpeed, simulator, Simulator::onHalfSpeed, Qt::DirectConnection);
+    connect(this, SimulatorThread::normalSpeed, simulator, Simulator::onNormalSpeed, Qt::DirectConnection);
 
     simulatorThread->start();
 }
@@ -44,4 +47,19 @@ void SimulatorThread::onUpdate()
 void SimulatorThread::onStop()
 {
     emit stop();
+}
+
+void SimulatorThread::onDoubleSpeed()
+{
+    emit doubleSpeed();
+}
+
+void SimulatorThread::onHalfSpeed()
+{
+    emit halfSpeed();
+}
+
+void SimulatorThread::onNormalSpeed()
+{
+    emit normalSpeed();
 }

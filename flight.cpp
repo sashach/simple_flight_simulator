@@ -14,6 +14,7 @@ Flight::Flight(const Flight &other):
     wayPoints = other.wayPoints;
     coordinates = other.coordinates;
     speed = other.speed;
+    lastUpdateTime = other.lastUpdateTime;
 }
 
 const Flight & Flight::operator = (const Flight & other)
@@ -24,6 +25,7 @@ const Flight & Flight::operator = (const Flight & other)
         wayPoints = other.wayPoints;
         coordinates = other.coordinates;
         speed = other.speed;
+        lastUpdateTime = other.lastUpdateTime;
     }
     return *this;
 }
@@ -46,11 +48,13 @@ QVector<WayPoint> & Flight::getWayPoints()
 void Flight::updateCoordinates(const int x, const int y, const int h)
 {
     coordinates.update(x, y, h);
+    lastUpdateTime = QDateTime::currentDateTime();
 }
 
 void Flight::updateCoordinates(const Point3d & coord)
 {
     coordinates = coord;
+    lastUpdateTime = QDateTime::currentDateTime();
 }
 
 const Point3d & Flight::getCoordinates() const
@@ -61,4 +65,9 @@ const Point3d & Flight::getCoordinates() const
 int Flight::getSpeed() const
 {
     return speed;
+}
+
+QDateTime Flight::getLastUpdateTime()
+{
+    return lastUpdateTime;
 }

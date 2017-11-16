@@ -17,6 +17,10 @@ MainWindow::MainWindow(FlightsModel &model, QWidget *parent) :
 
     connect(ui->runButton, QPushButton::pressed, this, MainWindow::onRun);
     connect(ui->pauseButton, QPushButton::pressed, this, MainWindow::onPause);
+
+    connect(ui->doubleSpeedButton, QRadioButton::pressed, this, MainWindow::onDoubleSpeed);
+    connect(ui->halfSpeedButton, QRadioButton::pressed, this, MainWindow::onHalfSpeed);
+    connect(ui->normalSpeedButton, QRadioButton::pressed, this, MainWindow::onNormalSpeed);
 }
 
 MainWindow::~MainWindow()
@@ -54,4 +58,19 @@ void MainWindow::onPause()
 void MainWindow::onGenerate()
 {
     emit generate();
+}
+
+void MainWindow::onDoubleSpeed()
+{
+    emit doubleSpeed();
+}
+
+void MainWindow::onHalfSpeed()
+{
+    emit halfSpeed();
+}
+
+void MainWindow::onNormalSpeed()
+{
+    emit normalSpeed();
 }
