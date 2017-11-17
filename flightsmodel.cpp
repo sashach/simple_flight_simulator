@@ -21,10 +21,8 @@ void FlightsModel::clearFlights()
 void FlightsModel::generateFlights()
 {
     FlightsGenerator flightsGenerator;
-    Flight flight;
+    Flight flight("TEST01");
     flightsGenerator.generate(flight, WORLD_SIZE);
-
-    flight.updateCoordinates(0, 0, 5000);
 
     QMutexLocker flightsLocker(&flightsLock);
     flights.push_back(flight);

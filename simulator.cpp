@@ -5,6 +5,7 @@
 #include <unistd.h>
 
 #include <QDateTime>
+#include <QDebug>
 
 Simulator::Simulator(FlightsModel &model, QObject *parent) :
     QObject(parent),
@@ -34,8 +35,14 @@ void Simulator::process()
             }
         }
 
-        processFlights();
-        flightsModel.onUpdate();
+        if(processFlights())
+        {
+            flightsModel.onUpdate();
+        }
+        else
+        {
+            break;
+        }
 
         usleep(500000);
     }
@@ -62,18 +69,20 @@ void Simulator::onStop()
     enabled = false;
 }
 
-void Simulator::processFlights()
+bool Simulator::processFlights()
 {
     QMutexLocker flightsModelLocker(&flightsModel.getLock());
 
+    bool res = false;
     QVector<Flight> & flights = flightsModel.getFlights();
     for(auto it = flights.begin(); it != flights.end(); ++it)
     {
-        processOneFlight(*it);
+        res |= processOneFlight(*it);
     }
+    return res;
 }
 
-void Simulator::processOneFlight(Flight & flight)
+bool Simulator::processOneFlight(Flight & flight)
 {
     Point3d coordinates = flight.getCoordinates();
 
@@ -83,41 +92,48 @@ void Simulator::processOneFlight(Flight & flight)
         currentSimulationSpeed = simulationSpeed;
     }
 
+    bool processed = false;
     QVector<WayPoint> & wayPoints = flight.getWayPoints();
     for(auto it = wayPoints.begin(); it != wayPoints.end(); ++it)
     {
         if(!it->isPassed())
         {
+            processed = true;
+
             int dX = abs(it->getCoordinates().getX() - coordinates.getX());
             int dY = abs(it->getCoordinates().getY() - coordinates.getY());
+            int dH = it->getCoordinates().getH() - coordinates.getH();
             double dist = sqrt(dX * dX + dY * dY);
 
             if(dist < POINTS_PASSED_THRESHOLD)
             {
                 it->setPassed(true);
 
-                coordinates.update(it->getCoordinates().getX(), it->getCoordinates().getY(), coordinates.getH());
+                coordinates.update(it->getCoordinates().getX(), it->getCoordinates().getY(), it->getCoordinates().getH());
                 break;
             }
 
             double timeDiff = flight.getLastUpdateTime().msecsTo(QDateTime::currentDateTime()) / 1000.0;
+            flight.setSimulatorTimeDiff(timeDiff);
 
             double k = currentSimulationSpeed * timeDiff * flight.getSpeed() / dist;
 
-            std::cout << "flight x:y " << coordinates.getX() << ":" << coordinates.getY()
+            qDebug() << "flight x:y:h " << coordinates.getX() << ":" << coordinates.getY() << ":" << coordinates.getH()
                       << " wpt x:y " << it->getCoordinates().getX() << ":" << it->getCoordinates().getY()
                       << " dist " << dist
                       << " k " << k << " timeDiff " << timeDiff << " spd " << currentSimulationSpeed
-                      << " dx:dy " << dX << ":" << dY << std::endl;
+                      << " dx:dy:dh " << dX << ":" << dY << ":" << dH;
 
-            coordinates.update(coordinates.getX() + k * dX, coordinates.getY() + k * dY, coordinates.getH());
-            std::cout << "updated flight x:y " << coordinates.getX() << ":" << coordinates.getY() << std::endl;
+            coordinates.update(coordinates.getX() + k * dX, coordinates.getY() + k * dY, coordinates.getH() + k * dH);
+            qDebug() << "updated flight x:y:h " << coordinates.getX() << ":" << coordinates.getY() << ":" << coordinates.getH();
 
             break;
         }
     }
 
     flight.updateCoordinates(coordinates);
+
+    return processed;
 }
 
 void Simulator::onDoubleSpeed()

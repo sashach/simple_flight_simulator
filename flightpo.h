@@ -28,6 +28,10 @@ public:
 
     const QVector<WayPointPO> & getWayPoints() const;
 
+    const QString & getAircraftId() const;
+    const QString & getLabelCoordinates() const;
+    const QString & getSimulatorTimeDiff() const;
+
 private:
     Point3d relativeCoordinates;
     QVector<WayPoint> relativeWayPoints;
@@ -35,6 +39,10 @@ private:
     int screenX;
     int screenY;
     QVector<WayPointPO> wayPoints;
+
+    QString aircraftId;
+    QString labelCoordinates;
+    QString simulatorTimeDiff;
 
 signals:
 

@@ -17,7 +17,10 @@ FlightPO::FlightPO(const FlightPO &other):
     relativeWayPoints(other.relativeWayPoints),
     screenX(other.screenX),
     screenY(other.screenY),
-    wayPoints(other.wayPoints)
+    wayPoints(other.wayPoints),
+    aircraftId(other.aircraftId),
+    labelCoordinates(other.labelCoordinates),
+    simulatorTimeDiff(other.simulatorTimeDiff)
 {
 }
 
@@ -30,6 +33,9 @@ const FlightPO & FlightPO::operator = (const FlightPO & other)
         screenX = other.screenX;
         screenY = other.screenY;
         wayPoints = other.wayPoints;
+        aircraftId = other.aircraftId;
+        labelCoordinates = other.labelCoordinates;
+        simulatorTimeDiff = other.simulatorTimeDiff;
     }
     return *this;
 }
@@ -38,6 +44,24 @@ void FlightPO::updateFlight(const Flight & flight)
 {
     relativeCoordinates = flight.getCoordinates();
     relativeWayPoints = flight.getWayPoints();
+    aircraftId = QString(flight.getAircraftId().c_str());
+
+    labelCoordinates = QString::number(relativeCoordinates.getX()) + ":"
+            + QString::number(relativeCoordinates.getY()) + ":"
+            + QString::number(relativeCoordinates.getH());
+
+    switch(flight.getClimbDescent())
+    {
+    case Flight::CLIMB_DESCENT_CLIMB:
+        labelCoordinates += QChar(0x2191);
+        break;
+
+    case Flight::CLIMB_DESCENT_DESCENT:
+        labelCoordinates += QChar (0x2193);
+        break;
+    }
+
+    simulatorTimeDiff = QString::number(flight.getSimulatorTimeDiff());
 }
 
 void FlightPO::updateScreenCoordinates(const ScreenCoordinatesCalculator & calculator)
@@ -51,6 +75,7 @@ void FlightPO::updateScreenCoordinates(const ScreenCoordinatesCalculator & calcu
         WayPointPO wayPoint(
                     calculator.getScreenX(it->getCoordinates().getX()),
                     calculator.getScreenY(it->getCoordinates().getY()),
+                    it->getCoordinates().getH(),
                     it->isPassed(),
                     it->getName()
                     );
@@ -71,4 +96,19 @@ int FlightPO::getY() const
 const QVector<WayPointPO> & FlightPO::getWayPoints() const
 {
     return wayPoints;
+}
+
+const QString & FlightPO::getAircraftId() const
+{
+    return aircraftId;
+}
+
+const QString & FlightPO::getLabelCoordinates() const
+{
+    return labelCoordinates;
+}
+
+const QString & FlightPO::getSimulatorTimeDiff() const
+{
+    return simulatorTimeDiff;
 }

@@ -5,23 +5,17 @@ WayPointPO::WayPointPO()
 
 }
 
-WayPointPO::WayPointPO(const int x, const int y, const bool _passed, const std::string & _name):
-    screenX(x),
-    screenY(y),
+WayPointPO::WayPointPO(const int x, const int y, const int h, const bool _passed, const std::string & _name):
+    coordinates(x, y, h),
     passed(_passed),
     name(_name.c_str())
 {
-
+    labelRow2 = QString::number(coordinates.getH());
 }
 
-int WayPointPO::getX() const
+const Point3d & WayPointPO::getCoordinates() const
 {
-    return screenX;
-}
-
-int WayPointPO::getY() const
-{
-    return screenY;
+    return coordinates;
 }
 
 bool WayPointPO::isPassed() const
@@ -32,4 +26,9 @@ bool WayPointPO::isPassed() const
 const QString & WayPointPO::getName() const
 {
     return name;
+}
+
+const QString & WayPointPO::getLabelString2() const
+{
+    return labelRow2;
 }

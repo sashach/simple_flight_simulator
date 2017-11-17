@@ -24,8 +24,8 @@ private:
     int simulationTime;
     double simulationSpeed;
 
-    void processFlights();
-    void processOneFlight(Flight & flight);
+    bool processFlights();
+    bool processOneFlight(Flight & flight);
 
     enum
     {

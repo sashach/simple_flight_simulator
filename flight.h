@@ -12,7 +12,7 @@ class Flight : public QObject
 {
     Q_OBJECT
 public:
-    explicit Flight(QObject *parent = nullptr);
+    explicit Flight(const std::string & _aircraftId = "", QObject *parent = nullptr);
     explicit Flight(const Flight &other);
 
     const Flight & operator = (const Flight & other);
@@ -30,11 +30,29 @@ public:
 
     QDateTime getLastUpdateTime();
 
+    const std::string & getAircraftId() const;
+
+    void setSimulatorTimeDiff(const double timeDiff);
+    double getSimulatorTimeDiff() const;
+
+    enum
+    {
+        CLIMB_DESCENT_NONE = 0,
+        CLIMB_DESCENT_CLIMB,
+        CLIMB_DESCENT_DESCENT
+    };
+
+    int getClimbDescent() const;
+
 private:
     QVector<WayPoint> wayPoints;
     Point3d coordinates;
     int speed;
     QDateTime lastUpdateTime;
+
+    std::string aircraftId;
+    double simulatorTimeDiff;
+    int climbDescent;
 
 signals:
 

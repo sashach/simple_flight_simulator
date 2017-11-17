@@ -4,8 +4,6 @@
 
 #include <QThread>
 
-
-
 SimulatorThread::SimulatorThread(FlightsModel &model, QObject *parent) :
     QObject(parent),
     flightsModel(model)
@@ -19,6 +17,10 @@ void SimulatorThread::run()
     Simulator * simulator = new Simulator(flightsModel);
 
     simulator->moveToThread(simulatorThread);
+
+    connect(simulator, SIGNAL(finished()), simulatorThread, SLOT(quit()));
+    connect(simulator, SIGNAL(finished()), simulator, SLOT(deleteLater()));
+    connect(simulatorThread, SIGNAL(finished()), simulatorThread, SLOT(deleteLater()));
 
     connect(this, SimulatorThread::start, simulator, Simulator::onStart);
     connect(this, SimulatorThread::stop, simulator, Simulator::onStop);
