@@ -2,8 +2,9 @@
 #include "constants.h"
 
 
-Flight::Flight(const std::string &_aircraftId, QObject *parent) :
+Flight::Flight(const int _id, const std::string &_aircraftId, QObject *parent) :
     QObject(parent),
+    id(_id),
     speed(GRID_SIZE),
     aircraftId(_aircraftId),
     simulatorTimeDiff(0.0),
@@ -13,21 +14,23 @@ Flight::Flight(const std::string &_aircraftId, QObject *parent) :
 }
 
 Flight::Flight(const Flight &other):
-    QObject(other.parent())
+    QObject(other.parent()),
+    id(other.id),
+    wayPoints(other.wayPoints),
+    coordinates(other.coordinates),
+    speed(other.speed),
+    lastUpdateTime(other.lastUpdateTime),
+    aircraftId(other.aircraftId),
+    simulatorTimeDiff(other.simulatorTimeDiff),
+    climbDescent(other.climbDescent)
 {
-    wayPoints = other.wayPoints;
-    coordinates = other.coordinates;
-    speed = other.speed;
-    lastUpdateTime = other.lastUpdateTime;
-    aircraftId = other.aircraftId;
-    simulatorTimeDiff = other.simulatorTimeDiff;
-    climbDescent = other.climbDescent;
 }
 
 const Flight & Flight::operator = (const Flight & other)
 {
     if(this != &other)
     {
+        id = other.id;
         wayPoints.clear();
         wayPoints = other.wayPoints;
         coordinates = other.coordinates;
@@ -38,6 +41,11 @@ const Flight & Flight::operator = (const Flight & other)
         climbDescent = other.climbDescent;
     }
     return *this;
+}
+
+int Flight::getId() const
+{
+    return id;
 }
 
 void Flight::addWayPoint(const WayPoint & wayPoint)

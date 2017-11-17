@@ -24,6 +24,7 @@ public:
 protected:
     void paintEvent(QPaintEvent *) override;
     void resizeEvent(QResizeEvent*) override;
+    void mousePressEvent(QMouseEvent * event) override;
 
 private:
     FlightsViewModel flightsPO;
@@ -36,9 +37,11 @@ private:
 
 signals:
     void sizeChanged(const int width, const int height);
+    void mousePress(const int x, const int y, const QPoint & global);
 
 public slots:
     void onModelUpdated();
+    void onShowMeterFeetMenu(const QPoint & global);
 };
 
 #endif // FLIGHTVIEW_H

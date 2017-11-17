@@ -21,11 +21,12 @@ void FlightsModel::clearFlights()
 void FlightsModel::generateFlights()
 {
     FlightsGenerator flightsGenerator;
-    Flight flight("TEST01");
-    flightsGenerator.generate(flight, WORLD_SIZE);
+
+    Flight flight1(1, "TEST01");
+    flightsGenerator.generate(flight1, WORLD_SIZE);
 
     QMutexLocker flightsLocker(&flightsLock);
-    flights.push_back(flight);
+    flights.insert(flight1.getId(), flight1);
 }
 
 void FlightsModel::onGenerate()
@@ -35,12 +36,12 @@ void FlightsModel::onGenerate()
     emit ready();
 }
 
-const QVector<Flight> &FlightsModel::getFlights() const
+const QMap<int, Flight> &FlightsModel::getFlights() const
 {
     return flights;
 }
 
-QVector<Flight> &FlightsModel::getFlights()
+QMap<int, Flight> &FlightsModel::getFlights()
 {
     return flights;
 }

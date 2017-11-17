@@ -15,7 +15,7 @@ class FlightPO : public QObject
 {
     Q_OBJECT
 public:
-    explicit FlightPO(QObject *parent = nullptr);
+    explicit FlightPO(const int _id = 0, QObject *parent = nullptr);
     explicit FlightPO(const FlightPO &other);
 
     const FlightPO & operator = (const FlightPO & other);
@@ -32,7 +32,10 @@ public:
     const QString & getLabelCoordinates() const;
     const QString & getSimulatorTimeDiff() const;
 
+    void setAltitudeInFeet(const bool val);
+
 private:
+    int id;
     Point3d relativeCoordinates;
     QVector<WayPoint> relativeWayPoints;
 
@@ -43,6 +46,11 @@ private:
     QString aircraftId;
     QString labelCoordinates;
     QString simulatorTimeDiff;
+
+    bool altitudeInFeet;
+    int climbDescent;
+
+    void updateLabelCoordinates();
 
 signals:
 

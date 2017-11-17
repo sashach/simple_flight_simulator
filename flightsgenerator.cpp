@@ -10,9 +10,9 @@ FlightsGenerator::FlightsGenerator()
 
 }
 
-void FlightsGenerator::generate(Flight &flight, const int worldSize)
+void FlightsGenerator::generate(Flight &flight, const int worldSize, const int offX)
 {
-    int curX = 0;
+    int curX = offX;
     int curY = 0;
     int curZ = 0;
 

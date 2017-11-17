@@ -5,7 +5,7 @@
 #include "flightpo.h"
 #include "screencoordinatescalculator.h"
 
-#include <QVector>
+#include <QMap>
 
 class FlightsModel;
 
@@ -15,22 +15,34 @@ class FlightsViewModel : public QObject
 public:
     explicit FlightsViewModel(FlightsModel & model, QObject *parent = nullptr);
 
-    const QVector<FlightPO> & getFlights() const;
+    const QMap<int, FlightPO> & getFlights() const;
 
 private:
     FlightsModel & flightsModel;
-    QVector<FlightPO> flights;
+    QMap<int, FlightPO> flights;
 
     ScreenCoordinatesCalculator coordinatesCalculator;
+    int menuFlightId;
 
     void calculateScreenCoordinates();
 
+    enum
+    {
+        MOUSE_CLICK_SENSITIVITY_SQRT = 100
+    };
+
+    void setAltitudeInFeet(const bool val);
+
 signals:
     void flightsChanged();
+    void showMetersFeetMenu(const QPoint & global);
 
 public slots:
     void onFlightsUpdated();
     void onViewSizeChanged(const int width, const int height);
+    void onMousePressed(const int x, const int y, const QPoint & global);
+    void onMetersSelected();
+    void onFeetSelected();
 };
 
 #endif // FLIGHTSVIEWMODEL_H

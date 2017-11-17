@@ -12,10 +12,12 @@ class Flight : public QObject
 {
     Q_OBJECT
 public:
-    explicit Flight(const std::string & _aircraftId = "", QObject *parent = nullptr);
+    explicit Flight(const int _id = 0, const std::string & _aircraftId = "", QObject *parent = nullptr);
     explicit Flight(const Flight &other);
 
     const Flight & operator = (const Flight & other);
+
+    int getId() const;
 
     void addWayPoint(const WayPoint & wayPoint);
     const QVector<WayPoint> & getWayPoints() const;
@@ -45,6 +47,7 @@ public:
     int getClimbDescent() const;
 
 private:
+    int id;
     QVector<WayPoint> wayPoints;
     Point3d coordinates;
     int speed;

@@ -2,7 +2,7 @@
 #define FLIGHTSMODEL_H
 
 #include <QObject>
-#include <QVector>
+#include <QMap>
 #include <QMutex>
 
 #include "flight.h"
@@ -13,13 +13,13 @@ class FlightsModel : public QObject
 public:
     explicit FlightsModel(QObject *parent = nullptr);
 
-    const QVector<Flight> & getFlights() const;
-    QVector<Flight> & getFlights();
+    const QMap <int, Flight> & getFlights() const;
+    QMap<int, Flight> & getFlights();
 
     QMutex & getLock();
 
 private:
-    QVector<Flight> flights;
+    QMap<int, Flight> flights;
     QMutex flightsLock;
 
     void clearFlights();

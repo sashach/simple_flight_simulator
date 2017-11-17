@@ -4,6 +4,9 @@
 #include "waypointpo.h"
 
 #include <QPainter>
+#include <QMouseEvent>
+#include <QMenu>
+#include <QAction>
 
 static const QBrush BACKGROUND_BRUSH = QBrush(QColor(200, 200, 200));
 static const QPen PEN_PASSED_ROUTE = QPen(QColor(120, 120, 160), FlightsView::LINES_WIDTH);
@@ -27,6 +30,8 @@ FlightsView::FlightsView(FlightsModel &model, QWidget *parent) :
 
     connect(&flightsPO, FlightsViewModel::flightsChanged, this, onModelUpdated);
     connect(this, sizeChanged, &flightsPO, FlightsViewModel::onViewSizeChanged);
+    connect(this, mousePress, &flightsPO, FlightsViewModel::onMousePressed);
+    connect(&flightsPO, FlightsViewModel::showMetersFeetMenu, this, onShowMeterFeetMenu);
 }
 
 void FlightsView::resizeEvent(QResizeEvent*)
@@ -56,7 +61,7 @@ void FlightsView::paintEvent(QPaintEvent *)
 
 void FlightsView::drawLinesPoints(QPainter & painter)
 {
-    const QVector<FlightPO> & flights = flightsPO.getFlights();
+    const QMap<int, FlightPO> & flights = flightsPO.getFlights();
 
     QVector <QPoint> points;
     QVector <QLine> passedLines, nonPassedLines;
@@ -67,7 +72,7 @@ void FlightsView::drawLinesPoints(QPainter & painter)
 
     for(auto flightIt = flights.begin(); flightIt != flights.end(); ++flightIt)
     {
-        const QVector<WayPointPO> & wayPoints = flightIt->getWayPoints();
+        const QVector<WayPointPO> & wayPoints = flightIt.value().getWayPoints();
 
         bool firstPoint = true;
         int prevX = 0, prevY = 0;
@@ -121,10 +126,10 @@ void FlightsView::drawPointsNames(QPainter & painter)
     painter.setFont(WAYPOINTS_FONT);
     painter.setPen(PEN_POINTS_NAMES);
 
-    const QVector<FlightPO> & flights = flightsPO.getFlights();
+    const QMap<int, FlightPO> & flights = flightsPO.getFlights();
     for(auto flightIt = flights.begin(); flightIt != flights.end(); ++flightIt)
     {
-        const QVector<WayPointPO> & wayPoints = flightIt->getWayPoints();
+        const QVector<WayPointPO> & wayPoints = flightIt.value().getWayPoints();
         for(auto pointIt = wayPoints.begin(); pointIt != wayPoints.end(); ++pointIt)
         {
             const Point3d & coordinates = pointIt->getCoordinates();
@@ -142,32 +147,49 @@ void FlightsView::drawFlights(QPainter & painter)
     painter.setFont(FLIGHT_LABEL_FONT);
     painter.setPen(PEN_POINTS_NAMES);
 
-    const QVector<FlightPO> & flights = flightsPO.getFlights();
+    const QMap<int, FlightPO> & flights = flightsPO.getFlights();
 
     QVector <QLine> flightsSymbols;
     flightsSymbols.reserve(2 * flights.size());
 
     for(auto flightIt = flights.begin(); flightIt != flights.end(); ++flightIt)
     {
-        int x = flightIt->getX();
-        int y = flightIt->getY();
+        int x = flightIt.value().getX();
+        int y = flightIt.value().getY();
 
         flightsSymbols.push_back(QLine(x - FLIGHT_CROSS_SIZE, y, x + FLIGHT_CROSS_SIZE, y));
         flightsSymbols.push_back(QLine(x, y - FLIGHT_CROSS_SIZE, x, y + FLIGHT_CROSS_SIZE));
 
-        x -= 10 + FLIGHT_FONT_METRICS.width(flightIt->getLabelCoordinates());
+        x -= 10 + FLIGHT_FONT_METRICS.width(flightIt.value().getLabelCoordinates());
         int curY = y - 40;
-        painter.drawText(x, curY, flightIt->getAircraftId());
+        painter.drawText(x, curY, flightIt.value().getAircraftId());
 
         curY += FLIGHT_FONT_METRICS.height();
-        painter.drawText(x, curY, flightIt->getLabelCoordinates());
+        painter.drawText(x, curY, flightIt.value().getLabelCoordinates());
 
         curY += FLIGHT_FONT_METRICS.height();
-        painter.drawText(x, curY, flightIt->getSimulatorTimeDiff());
+        painter.drawText(x, curY, flightIt.value().getSimulatorTimeDiff());
     }
 
     painter.setPen(PEN_FLIGHT);
     painter.drawLines(flightsSymbols);
 }
 
+void FlightsView::mousePressEvent(QMouseEvent * event)
+{
+    emit mousePress(event->x(), event->y(), event->globalPos());
+}
 
+void FlightsView::onShowMeterFeetMenu(const QPoint &global)
+{
+    QMenu menu(this);
+    QAction * actMeters = new QAction("M", this);
+    connect(actMeters, QAction::triggered, &flightsPO, FlightsViewModel::onMetersSelected);
+
+    QAction * actFeet = new QAction("F", this);
+    connect(actFeet, QAction::triggered, &flightsPO, FlightsViewModel::onFeetSelected);
+
+    menu.addAction(actMeters);
+    menu.addAction(actFeet);
+    menu.exec(global);
+}

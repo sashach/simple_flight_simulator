@@ -74,10 +74,10 @@ bool Simulator::processFlights()
     QMutexLocker flightsModelLocker(&flightsModel.getLock());
 
     bool res = false;
-    QVector<Flight> & flights = flightsModel.getFlights();
+    QMap<int, Flight> & flights = flightsModel.getFlights();
     for(auto it = flights.begin(); it != flights.end(); ++it)
     {
-        res |= processOneFlight(*it);
+        res |= processOneFlight(it.value());
     }
     return res;
 }
