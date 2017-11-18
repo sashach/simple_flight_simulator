@@ -18,10 +18,12 @@ public:
     const Flight & operator = (const Flight & other);
 
     int getId() const;
+    void setId(const int _id);
 
     void addWayPoint(const WayPoint & wayPoint);
     const QVector<WayPoint> & getWayPoints() const;
     QVector<WayPoint> & getWayPoints();
+    void deleteWayPoints();
 
     void updateCoordinates(const int x, const int y, const int h);
     void updateCoordinates(const Point3d & coord);

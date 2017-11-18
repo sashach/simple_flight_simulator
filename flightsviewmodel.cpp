@@ -6,6 +6,7 @@
 FlightsViewModel::FlightsViewModel(FlightsModel &model, QObject *parent) :
     QObject(parent),
     flightsModel(model),
+    optimisedFlightExists(false),
     menuFlightId(0)
 {
     connect(&flightsModel, FlightsModel::ready, this, onFlightsUpdated);
@@ -25,21 +26,31 @@ const QMap<int, FlightPO> &FlightsViewModel::getFlights() const
 
 void FlightsViewModel::onFlightsUpdated()
 {
+    optimisedFlightExists = false;
+
     QMutexLocker flightsModelLocker(&flightsModel.getLock());
 
     const QMap<int, Flight> & _flights = flightsModel.getFlights();
     for(auto it = _flights.begin(); it != _flights.end(); ++it)
     {
-        auto flightIt = flights.find(it.key());
-        if(flightIt == flights.end())
+        if(it.value().getId() < FlightsModel::OPTIMISER_FLIGHT_ID)
         {
-            FlightPO flight(it.key());
-            flight.updateFlight(it.value());
-            flights.insert(it.key(), flight);
+            auto flightIt = flights.find(it.key());
+            if(flightIt == flights.end())
+            {
+                FlightPO flight(it.key());
+                flight.updateFlight(it.value());
+                flights.insert(it.key(), flight);
+            }
+            else
+            {
+                flightIt.value().updateFlight(it.value());
+            }
         }
         else
         {
-            flightIt.value().updateFlight(it.value());
+            optimisedFlightExists = true;
+            optimisedFlight.updateFlight(it.value());
         }
     }
 
@@ -51,6 +62,11 @@ void FlightsViewModel::calculateScreenCoordinates()
     for(auto it = flights.begin(); it != flights.end(); ++it)
     {
         it.value().updateScreenCoordinates(coordinatesCalculator);
+    }
+
+    if(optimisedFlightExists)
+    {
+        optimisedFlight.updateScreenCoordinates(coordinatesCalculator);
     }
 
     emit flightsChanged();
@@ -93,4 +109,20 @@ void FlightsViewModel::setAltitudeInFeet(const bool val)
         emit flightsChanged();
     }
     menuFlightId = 0;
+}
+
+bool FlightsViewModel::isOptimisedFlightExists() const
+{
+    return optimisedFlightExists;
+}
+
+const FlightPO & FlightsViewModel::getOptimisedFlight() const
+{
+    return optimisedFlight;
+}
+
+void FlightsViewModel::clearFlights()
+{
+    flights.clear();
+    optimisedFlightExists = false;
 }

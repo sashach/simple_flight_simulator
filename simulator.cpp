@@ -96,7 +96,7 @@ bool Simulator::processFlights()
 
     QMutexLocker flightsModelLocker(&flightsModel.getLock());
     QMap<int, Flight> & flights = flightsModel.getFlights();
-    for(auto it = flights.begin(); it != flights.end(); ++it)
+    for(auto it = flights.begin(); it != flights.end() && it.value().getId() < FlightsModel::OPTIMISER_FLIGHT_ID; ++it)
     {
         res |= processOneFlight(it.value());
     }
@@ -120,6 +120,12 @@ bool Simulator::processOneFlight(Flight & flight)
         if(!it->isPassed())
         {
             processed = true;
+
+            if(it == wayPoints.begin())
+            {
+                it->setPassed(true);
+                continue;
+            }
 
             int dX = abs(it->getCoordinates().getX() - coordinates.getX());
             int dY = abs(it->getCoordinates().getY() - coordinates.getY());

@@ -29,6 +29,9 @@ signals:
     void doubleSpeed();
     void halfSpeed();
     void normalSpeed();
+    void alternative();
+    void applyAlternative();
+    void cancelAlternative();
 
 public slots:
     void onFlightsView();
@@ -39,6 +42,8 @@ public slots:
     void onDoubleSpeed();
     void onHalfSpeed();
     void onNormalSpeed();
+    void onAlternative();
+    void onAlternativeGenerated();
 };
 
 #endif // MAINWINDOW_H

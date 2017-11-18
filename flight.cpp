@@ -48,6 +48,11 @@ int Flight::getId() const
     return id;
 }
 
+void Flight::setId(const int _id)
+{
+    id = _id;
+}
+
 void Flight::addWayPoint(const WayPoint & wayPoint)
 {
     wayPoints.push_back(wayPoint);
@@ -61,6 +66,11 @@ const QVector<WayPoint> & Flight::getWayPoints() const
 QVector<WayPoint> & Flight::getWayPoints()
 {
     return wayPoints;
+}
+
+void Flight::deleteWayPoints()
+{
+    wayPoints.clear();
 }
 
 void Flight::updateCoordinates(const int x, const int y, const int h)

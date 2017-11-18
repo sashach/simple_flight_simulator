@@ -18,22 +18,39 @@ public:
 
     QMutex & getLock();
 
+    enum
+    {
+        OPTIMISER_FLIGHT_ID = 9999
+    };
+
 private:
     QMap<int, Flight> flights;
     QMutex flightsLock;
+    int lastFlightId;
+    int optimisedFlightId;
 
     void clearFlights();
     void generateFlights();
+    void optimiseFlight();
+    int generateFlightId();
+
+    void applyAlternativeRoute();
+
+    void removeAlternativeRoute();
 
 signals:
     void updated();
     void ready();
     void run();
     void pause();
+    void alternativeRouteGenerated();
 
 public slots:
     void onGenerate();
     void onUpdate();
+    void onOptimise();
+    void onApplyAlternativeRoute();
+    void onCancelAlternativeRoute();
 };
 
 #endif // FLIGHTSMODEL_H

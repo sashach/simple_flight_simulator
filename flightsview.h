@@ -34,6 +34,7 @@ private:
     void drawLinesPoints(QPainter & painter);
     void drawPointsNames(QPainter & painter);
     void drawFlights(QPainter & painter);
+    void drawOptimisedFlight(QPainter & painter);
 
 signals:
     void sizeChanged(const int width, const int height);

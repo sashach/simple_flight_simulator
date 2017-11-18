@@ -9,8 +9,11 @@
 #include <QAction>
 
 static const QBrush BACKGROUND_BRUSH = QBrush(QColor(200, 200, 200));
-static const QPen PEN_PASSED_ROUTE = QPen(QColor(120, 120, 160), FlightsView::LINES_WIDTH);
-static const QPen PEN_NON_PASSED_ROUTE = QPen(QColor(90, 90, 220), FlightsView::LINES_WIDTH);
+static const QPen PEN_PASSED_ROUTE = QPen(QColor(120, 120, 180), FlightsView::LINES_WIDTH);
+static const QPen PEN_NON_PASSED_ROUTE = QPen(QColor(90, 90, 240), FlightsView::LINES_WIDTH);
+static const QPen BY_PASSED_ROUTE = QPen(QColor(240, 240, 120), FlightsView::LINES_WIDTH);
+static const QPen DIRECTED_ROUTE = QPen(QColor(240, 120, 120), FlightsView::LINES_WIDTH);
+
 static const QPen PEN_POINTS = QPen(QColor(240, 240, 70), FlightsView::POINTS_WIDTH);
 static const QPen PEN_POINTS_NAMES = QPen(QColor(240, 240, 70));
 static const QPen PEN_FLIGHT = QPen(QColor(20, 180, 40), FlightsView::LINES_WIDTH);
@@ -55,6 +58,12 @@ void FlightsView::paintEvent(QPaintEvent *)
     painter.fillRect(base, BACKGROUND_BRUSH);
 
     drawLinesPoints(painter);
+
+    if(flightsPO.isOptimisedFlightExists())
+    {
+        drawOptimisedFlight(painter);
+    }
+
     drawPointsNames(painter);
     drawFlights(painter);
 }
@@ -173,6 +182,55 @@ void FlightsView::drawFlights(QPainter & painter)
 
     painter.setPen(PEN_FLIGHT);
     painter.drawLines(flightsSymbols);
+}
+
+void FlightsView::drawOptimisedFlight(QPainter & painter)
+{
+    QVector <QLine> byPassedLines, direcredLines;
+
+    int prevX = 0, prevY = 0;
+    int directedStartX = 0, directedStartY = 0;
+    bool directStarted = false;
+
+    const QVector<WayPointPO> & wayPoints = flightsPO.getOptimisedFlight().getWayPoints();
+    for(auto pointIt = wayPoints.begin(); pointIt != wayPoints.end(); ++pointIt)
+    {
+        const Point3d & coordinates = pointIt->getCoordinates();
+        if(!pointIt->isPassed())
+        {
+            if(!pointIt->isMandatory())
+            {
+                if(!directStarted)
+                {
+                    directedStartX = prevX;
+                    directedStartY = prevY;
+                    directStarted = true;
+                }
+                byPassedLines.push_back(QLine(prevX, prevY, coordinates.getX(), coordinates.getY()));
+
+                if((pointIt + 1) != wayPoints.end())
+                {
+                    const Point3d & nextPointCoordinates = (pointIt + 1)->getCoordinates();
+                    byPassedLines.push_back(QLine(coordinates.getX(), coordinates.getY(),
+                                                  nextPointCoordinates.getX(), nextPointCoordinates.getY()));
+                }
+            }
+            else if (directStarted)
+            {
+                direcredLines.push_back(QLine(directedStartX, directedStartY,
+                                    coordinates.getX(), coordinates.getY()));
+                directStarted = false;
+            }
+        }
+        prevX = coordinates.getX();
+        prevY = coordinates.getY();
+    }
+
+    painter.setPen(BY_PASSED_ROUTE);
+    painter.drawLines(byPassedLines);
+
+    painter.setPen(DIRECTED_ROUTE);
+    painter.drawLines(direcredLines);
 }
 
 void FlightsView::mousePressEvent(QMouseEvent * event)

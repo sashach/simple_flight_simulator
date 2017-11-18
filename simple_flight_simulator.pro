@@ -38,7 +38,8 @@ SOURCES += \
     waypointpo.cpp \
     simulator.cpp \
     simulatorthread.cpp \
-    signalsmanager.cpp
+    signalsmanager.cpp \
+    flightplanoptimiser.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -55,7 +56,8 @@ HEADERS += \
     constants.h \
     simulator.h \
     simulatorthread.h \
-    signalsmanager.h
+    signalsmanager.h \
+    flightplanoptimiser.h
 
 FORMS += \
         mainwindow.ui

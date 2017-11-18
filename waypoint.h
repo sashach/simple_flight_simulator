@@ -21,7 +21,7 @@ public:
 
     void setPassed(const bool _passed);
     void setName(const std::string & _name);
-
+    void setMandatory(const bool _mandatory);
 private:
     Point3d coordinates;
     bool passed;

@@ -17,9 +17,15 @@ public:
 
     const QMap<int, FlightPO> & getFlights() const;
 
+    bool isOptimisedFlightExists() const;
+    const FlightPO & getOptimisedFlight() const;
+
 private:
     FlightsModel & flightsModel;
     QMap<int, FlightPO> flights;
+
+    FlightPO optimisedFlight;
+    bool optimisedFlightExists;
 
     ScreenCoordinatesCalculator coordinatesCalculator;
     int menuFlightId;
@@ -43,6 +49,7 @@ public slots:
     void onMousePressed(const int x, const int y, const QPoint & global);
     void onMetersSelected();
     void onFeetSelected();
+    void clearFlights();
 };
 
 #endif // FLIGHTSVIEWMODEL_H

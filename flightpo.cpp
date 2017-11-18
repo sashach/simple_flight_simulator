@@ -100,6 +100,7 @@ void FlightPO::updateScreenCoordinates(const ScreenCoordinatesCalculator & calcu
                     calculator.getScreenY(it->getCoordinates().getY()),
                     it->getCoordinates().getH(),
                     it->isPassed(),
+                    it->isMandatory(),
                     it->getName()
                     );
         wayPoints.push_back(wayPoint);

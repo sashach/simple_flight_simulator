@@ -65,3 +65,8 @@ void WayPoint::setName(const std::string & _name)
 {
     name = _name;
 }
+
+void WayPoint::setMandatory(const bool _mandatory)
+{
+    mandatory = _mandatory;
+}

@@ -23,7 +23,7 @@ void SimulatorThread::run()
     connect(simulatorThread, SIGNAL(finished()), simulatorThread, SLOT(deleteLater()));
 
     connect(this, SimulatorThread::start, simulator, Simulator::onStart);
-    connect(this, SimulatorThread::stop, simulator, Simulator::onStop);
+    connect(this, SimulatorThread::stop, simulator, Simulator::onStop, Qt::DirectConnection);
     connect(this, SimulatorThread::pause, simulator, Simulator::onPause, Qt::DirectConnection);
     connect(this, SimulatorThread::doubleSpeed, simulator, Simulator::onDoubleSpeed, Qt::DirectConnection);
     connect(this, SimulatorThread::halfSpeed, simulator, Simulator::onHalfSpeed, Qt::DirectConnection);
