@@ -102,3 +102,10 @@ void MainWindow::onAlternativeGenerated()
         break;
     }
 }
+
+void MainWindow::onAlternativeNotGenerated()
+{
+    QMessageBox msgBox;
+    msgBox.setText("Could not create alternative route.\nNo possible to bypass points");
+    msgBox.exec();
+}

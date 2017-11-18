@@ -11,10 +11,10 @@ class FlightPlanOptimiser : public QObject
 public:
     explicit FlightPlanOptimiser(QObject *parent = nullptr);
 
-    void createOptimisedCopy(QMap<int, Flight> & flights, const int flightId, const int optimisedFlightId);
+    bool createOptimisedCopy(QMap<int, Flight> & flights, const int flightId, const int optimisedFlightId);
 
 private:
-    void optimiseRoute(Flight & flight);
+    bool optimiseRoute(Flight & flight);
 
 signals:
 

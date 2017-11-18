@@ -20,6 +20,7 @@ public:
 
     enum
     {
+        MAX_FLIGHTS_NUMBER = 1,
         OPTIMISER_FLIGHT_ID = 9999
     };
 
@@ -31,7 +32,7 @@ private:
 
     void clearFlights();
     void generateFlights();
-    void optimiseFlight();
+    bool optimiseFlight();
     int generateFlightId();
 
     void applyAlternativeRoute();
@@ -44,6 +45,7 @@ signals:
     void run();
     void pause();
     void alternativeRouteGenerated();
+    void alternativeRouteNotGenerated();
 
 public slots:
     void onGenerate();

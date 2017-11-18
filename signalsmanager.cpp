@@ -16,6 +16,7 @@ void SignalsManager::connectObjects(MainWindow & mainWindow, FlightsModel & flig
     connect(&flightsModel, FlightsModel::ready, &mainWindow, MainWindow::onGenerationReady);
     connect(&mainWindow, MainWindow::alternative, &flightsModel, FlightsModel::onOptimise);
     connect(&flightsModel, FlightsModel::alternativeRouteGenerated, &mainWindow, MainWindow::onAlternativeGenerated);
+    connect(&flightsModel, FlightsModel::alternativeRouteNotGenerated, &mainWindow, MainWindow::onAlternativeNotGenerated);
     connect(&mainWindow, MainWindow::applyAlternative, &flightsModel, FlightsModel::onApplyAlternativeRoute);
     connect(&mainWindow, MainWindow::cancelAlternative, &flightsModel, FlightsModel::onCancelAlternativeRoute);
 }

@@ -121,18 +121,12 @@ bool Simulator::processOneFlight(Flight & flight)
         {
             processed = true;
 
-            if(it == wayPoints.begin())
-            {
-                it->setPassed(true);
-                continue;
-            }
-
             int dX = abs(it->getCoordinates().getX() - coordinates.getX());
             int dY = abs(it->getCoordinates().getY() - coordinates.getY());
             int dH = it->getCoordinates().getH() - coordinates.getH();
             double dist = sqrt(dX * dX + dY * dY);
 
-            if(dist < POINTS_PASSED_THRESHOLD)
+            if(dist < POINTS_PASSED_THRESHOLD || it == wayPoints.begin())
             {
                 it->setPassed(true);
 

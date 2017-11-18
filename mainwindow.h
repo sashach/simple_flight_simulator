@@ -44,6 +44,7 @@ public slots:
     void onNormalSpeed();
     void onAlternative();
     void onAlternativeGenerated();
+    void onAlternativeNotGenerated();
 };
 
 #endif // MAINWINDOW_H

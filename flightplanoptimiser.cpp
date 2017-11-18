@@ -7,26 +7,27 @@ FlightPlanOptimiser::FlightPlanOptimiser(QObject *parent) : QObject(parent)
 
 }
 
-void FlightPlanOptimiser::createOptimisedCopy(QMap<int, Flight> & flights, const int flightId, const int optimisedFlightId)
+bool FlightPlanOptimiser::createOptimisedCopy(QMap<int, Flight> & flights, const int flightId, const int optimisedFlightId)
 {
-    auto oldOptimised = flights.find(optimisedFlightId);
-    if(oldOptimised != flights.end())
-    {
-        flights.remove(oldOptimised.key());
-    }
-
+    bool res = false;
     auto it = flights.find(flightId);
     if(it != flights.end())
     {
         Flight optimisedFlight(it.value());
         optimisedFlight.setId(optimisedFlightId);
-        optimiseRoute(optimisedFlight);
-        flights.insert(optimisedFlightId, optimisedFlight);
+
+        if(optimiseRoute(optimisedFlight))
+        {
+            flights.insert(optimisedFlightId, optimisedFlight);
+            res = true;
+        }
     }
+    return res;
 }
 
-void FlightPlanOptimiser::optimiseRoute(Flight & flight)
+bool FlightPlanOptimiser::optimiseRoute(Flight & flight)
 {
+    bool res = false;
     int nonPassedAhead = 0;
     QVector <WayPoint> & wayPoints = flight.getWayPoints();
     for(auto it = wayPoints.begin(); it != wayPoints.end() && (it + 3) != wayPoints.end(); ++it)
@@ -36,9 +37,14 @@ void FlightPlanOptimiser::optimiseRoute(Flight & flight)
             if(nonPassedAhead > 2) // cannot bypass next point
             {
                 double p = 1.0 * std::rand() / RAND_MAX;
-                it->setMandatory(p >= 0.25);
+                if(p < 0.25)
+                {
+                    it->setMandatory(false);
+                    res = true;
+                }
             }
             ++nonPassedAhead;
         }
     }
+    return res;
 }

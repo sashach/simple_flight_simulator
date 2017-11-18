@@ -26,11 +26,14 @@ void FlightsModel::generateFlights()
 {
     FlightsGenerator flightsGenerator;
 
-    Flight flight(generateFlightId(), "TEST01");
-    flightsGenerator.generate(flight, WORLD_SIZE);
+    for(int i = 0; i < MAX_FLIGHTS_NUMBER; ++i)
+    {
+        Flight flight(generateFlightId(), "TEST0" + std::to_string(i));
+        flightsGenerator.generate(flight, WORLD_SIZE, i * 100);
 
-    QMutexLocker flightsLocker(&flightsLock);
-    flights.insert(flight.getId(), flight);
+        QMutexLocker flightsLocker(&flightsLock);
+        flights.insert(flight.getId(), flight);
+    }
 }
 
 int FlightsModel::generateFlightId()
@@ -68,16 +71,22 @@ void FlightsModel::onUpdate()
 void FlightsModel::onOptimise()
 {
     optimisedFlightId = 1;
-    optimiseFlight();
-    emit updated();
-    emit alternativeRouteGenerated();
+    if(optimiseFlight())
+    {
+        emit updated();
+        emit alternativeRouteGenerated();
+    }
+    else
+    {
+        emit alternativeRouteNotGenerated();
+    }
 }
 
-void FlightsModel::optimiseFlight()
+bool FlightsModel::optimiseFlight()
 {
     FlightPlanOptimiser optimiser;
     QMutexLocker flightsLocker(&flightsLock);
-    optimiser.createOptimisedCopy(flights, optimisedFlightId, OPTIMISER_FLIGHT_ID);
+    return optimiser.createOptimisedCopy(flights, optimisedFlightId, OPTIMISER_FLIGHT_ID);
 }
 
 void FlightsModel::applyAlternativeRoute()

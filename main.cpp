@@ -13,6 +13,7 @@ int main(int argc, char *argv[])
     FlightsModel flightsModel;
 
     MainWindow w(flightsModel);
+    w.setWindowFlags(Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
     w.show();
 
     SimulatorThread simulator(flightsModel);
