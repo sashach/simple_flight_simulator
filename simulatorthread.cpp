@@ -24,6 +24,7 @@ void SimulatorThread::run()
 
     connect(this, SimulatorThread::start, simulator, Simulator::onStart);
     connect(this, SimulatorThread::stop, simulator, Simulator::onStop);
+    connect(this, SimulatorThread::pause, simulator, Simulator::onPause, Qt::DirectConnection);
     connect(this, SimulatorThread::doubleSpeed, simulator, Simulator::onDoubleSpeed, Qt::DirectConnection);
     connect(this, SimulatorThread::halfSpeed, simulator, Simulator::onHalfSpeed, Qt::DirectConnection);
     connect(this, SimulatorThread::normalSpeed, simulator, Simulator::onNormalSpeed, Qt::DirectConnection);

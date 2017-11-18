@@ -58,7 +58,7 @@ void FlightPO::updateFlight(const Flight & flight)
 
     updateLabelCoordinates();
 
-    simulatorTimeDiff = QString::number(flight.getSimulatorTimeDiff());
+    simulatorTimeDiff = QString::number(flight.getSimulatorTimeDiff()/1000.0);
 }
 
 void FlightPO::updateLabelCoordinates()

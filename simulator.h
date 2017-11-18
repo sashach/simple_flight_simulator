@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QMutex>
+#include <QDateTime>
 
 class FlightsModel;
 class Flight;
@@ -21,11 +22,13 @@ private:
     QMutex controlLock;
     bool enabled;
     bool paused;
-    int simulationTime;
+    QDateTime simulatorTime;
+    QDateTime simulatorStartTime;
     double simulationSpeed;
 
     bool processFlights();
     bool processOneFlight(Flight & flight);
+    void resetFlightsUpdateTime();
 
     enum
     {

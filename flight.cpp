@@ -84,7 +84,11 @@ void Flight::updateCoordinates(const Point3d & coord)
     }
 
     coordinates = coord;
-    lastUpdateTime = QDateTime::currentDateTime();
+}
+
+void Flight::setLastUpdateTime(const QDateTime & timeStamp)
+{
+    lastUpdateTime = timeStamp;
 }
 
 const Point3d & Flight::getCoordinates() const
@@ -97,7 +101,7 @@ int Flight::getSpeed() const
     return speed;
 }
 
-QDateTime Flight::getLastUpdateTime()
+const QDateTime &Flight::getLastUpdateTime() const
 {
     return lastUpdateTime;
 }

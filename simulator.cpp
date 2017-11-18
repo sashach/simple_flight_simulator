@@ -12,13 +12,14 @@ Simulator::Simulator(FlightsModel &model, QObject *parent) :
     flightsModel(model),
     enabled(false),
     paused(false),
-    simulationTime(0),
     simulationSpeed(1.0)
 {
 }
 
 void Simulator::process()
 {
+    const int loopDelay = 500000;
+    const qint64 simulationTimerStep = 500;
     while(true)
     {
         {
@@ -30,10 +31,12 @@ void Simulator::process()
             }
             if(paused)
             {
-                usleep(100000);
+                usleep(loopDelay);
                 continue;
             }
         }
+
+        simulatorTime = simulatorTime.addMSecs(simulationSpeed * simulationTimerStep);
 
         if(processFlights())
         {
@@ -44,7 +47,7 @@ void Simulator::process()
             break;
         }
 
-        usleep(500000);
+        usleep(loopDelay);
     }
 }
 
@@ -54,7 +57,22 @@ void Simulator::onStart()
     paused = false;
     simulationSpeed = 1.0;
 
+    simulatorStartTime = QDateTime::currentDateTime();
+    simulatorStartTime.setTime(QTime(10, 0, 0, 0));
+    simulatorTime = simulatorStartTime;
+    resetFlightsUpdateTime();
+
     process();
+}
+
+void Simulator::resetFlightsUpdateTime()
+{
+    QMutexLocker flightsModelLocker(&flightsModel.getLock());
+    QMap<int, Flight> & flights = flightsModel.getFlights();
+    for(auto it = flights.begin(); it != flights.end(); ++it)
+    {
+        it.value().setLastUpdateTime(simulatorTime);
+    }
 }
 
 void Simulator::onPause()
@@ -71,9 +89,12 @@ void Simulator::onStop()
 
 bool Simulator::processFlights()
 {
-    QMutexLocker flightsModelLocker(&flightsModel.getLock());
+    qDebug() << "===============================";
+    qDebug() << "time: " << simulatorTime;
 
     bool res = false;
+
+    QMutexLocker flightsModelLocker(&flightsModel.getLock());
     QMap<int, Flight> & flights = flightsModel.getFlights();
     for(auto it = flights.begin(); it != flights.end(); ++it)
     {
@@ -113,12 +134,18 @@ bool Simulator::processOneFlight(Flight & flight)
                 break;
             }
 
-            double timeDiff = flight.getLastUpdateTime().msecsTo(QDateTime::currentDateTime()) / 1000.0;
-            flight.setSimulatorTimeDiff(timeDiff);
+            double timeDiff = flight.getLastUpdateTime().msecsTo(simulatorTime) / 1000.0;
 
-            double k = currentSimulationSpeed * timeDiff * flight.getSpeed() / dist;
+            if(timeDiff < std::numeric_limits<double>::epsilon())
+            {
+                continue;
+            }
 
-            qDebug() << "flight x:y:h " << coordinates.getX() << ":" << coordinates.getY() << ":" << coordinates.getH()
+            flight.setSimulatorTimeDiff(simulatorStartTime.msecsTo(simulatorTime));
+
+            double k = timeDiff * flight.getSpeed() / dist;
+
+            qDebug()  << "flight x:y:h " << coordinates.getX() << ":" << coordinates.getY() << ":" << coordinates.getH()
                       << " wpt x:y " << it->getCoordinates().getX() << ":" << it->getCoordinates().getY()
                       << " dist " << dist
                       << " k " << k << " timeDiff " << timeDiff << " spd " << currentSimulationSpeed
@@ -132,6 +159,7 @@ bool Simulator::processOneFlight(Flight & flight)
     }
 
     flight.updateCoordinates(coordinates);
+    flight.setLastUpdateTime(simulatorTime);
 
     return processed;
 }

@@ -30,7 +30,7 @@ public:
 
     int getSpeed() const;
 
-    QDateTime getLastUpdateTime();
+    const QDateTime &getLastUpdateTime() const;
 
     const std::string & getAircraftId() const;
 
@@ -45,6 +45,7 @@ public:
     };
 
     int getClimbDescent() const;
+    void setLastUpdateTime(const QDateTime &timeStamp);
 
 private:
     int id;
