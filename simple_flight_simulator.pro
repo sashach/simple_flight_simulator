@@ -39,7 +39,11 @@ SOURCES += \
     simulator.cpp \
     simulatorthread.cpp \
     signalsmanager.cpp \
-    flightplanoptimiser.cpp
+    flightplanoptimiser.cpp \
+    netreceiver.cpp \
+    netsender.cpp \
+    commandscreator.cpp \
+    commandsparser.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -57,7 +61,11 @@ HEADERS += \
     simulator.h \
     simulatorthread.h \
     signalsmanager.h \
-    flightplanoptimiser.h
+    flightplanoptimiser.h \
+    netreceiver.h \
+    netsender.h \
+    commandscreator.h \
+    commandsparser.h
 
 FORMS += \
         mainwindow.ui

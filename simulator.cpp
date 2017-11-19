@@ -98,7 +98,12 @@ bool Simulator::processFlights()
     QMap<int, Flight> & flights = flightsModel.getFlights();
     for(auto it = flights.begin(); it != flights.end() && it.value().getId() < FlightsModel::OPTIMISER_FLIGHT_ID; ++it)
     {
-        res |= processOneFlight(it.value());
+        bool processed = processOneFlight(it.value());
+        if(processed)
+        {
+            res = true;
+            flightsModel.sendUpdateFlightNotification(it.value());
+        }
     }
     return res;
 }

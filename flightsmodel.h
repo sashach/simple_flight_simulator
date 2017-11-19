@@ -24,6 +24,8 @@ public:
         OPTIMISER_FLIGHT_ID = 9999
     };
 
+    void sendUpdateFlightNotification(const Flight & flight);
+
 private:
     QMap<int, Flight> flights;
     QMutex flightsLock;
@@ -38,6 +40,9 @@ private:
     void applyAlternativeRoute();
 
     void removeAlternativeRoute();
+    void updateOneFlight(const Flight & flight);
+
+    void sendUpdateFlightNotification(const int id);
 
 signals:
     void updated();
@@ -46,6 +51,8 @@ signals:
     void pause();
     void alternativeRouteGenerated();
     void alternativeRouteNotGenerated();
+    void readyFlights(const QMap <int, Flight> & flights);
+    void sendUpdateOneFlight(const Flight & flight);
 
 public slots:
     void onGenerate();
@@ -53,6 +60,8 @@ public slots:
     void onOptimise();
     void onApplyAlternativeRoute();
     void onCancelAlternativeRoute();
+    void onClearFlights();
+    void onUpdateOneFlight(const Flight & flight);
 };
 
 #endif // FLIGHTSMODEL_H

@@ -28,7 +28,7 @@ void FlightsModel::generateFlights()
 
     for(int i = 0; i < MAX_FLIGHTS_NUMBER; ++i)
     {
-        Flight flight(generateFlightId(), "TEST0" + std::to_string(i));
+        Flight flight(generateFlightId(), "TEST0" + std::to_string(i + 1));
         flightsGenerator.generate(flight, WORLD_SIZE, i * 100);
 
         QMutexLocker flightsLocker(&flightsLock);
@@ -46,6 +46,9 @@ void FlightsModel::onGenerate()
     clearFlights();
     generateFlights();
     emit ready();
+
+    QMutexLocker flightsLocker(&flightsLock);
+    emit readyFlights(flights);
 }
 
 const QMap<int, Flight> &FlightsModel::getFlights() const
@@ -73,6 +76,7 @@ void FlightsModel::onOptimise()
     optimisedFlightId = 1;
     if(optimiseFlight())
     {
+        sendUpdateFlightNotification(OPTIMISER_FLIGHT_ID);
         emit updated();
         emit alternativeRouteGenerated();
     }
@@ -113,6 +117,8 @@ void FlightsModel::applyAlternativeRoute()
 void FlightsModel::onApplyAlternativeRoute()
 {
     applyAlternativeRoute();
+    sendUpdateFlightNotification(optimisedFlightId);
+
     removeAlternativeRoute();
     emit updated();
 }
@@ -128,4 +134,44 @@ void FlightsModel::onCancelAlternativeRoute()
 {
     removeAlternativeRoute();
     emit updated();
+}
+
+void FlightsModel::onClearFlights()
+{
+    clearFlights();
+}
+
+void FlightsModel::onUpdateOneFlight(const Flight & flight)
+{
+    updateOneFlight(flight);
+    emit updated();
+}
+
+void FlightsModel::updateOneFlight(const Flight & flight)
+{
+    QMutexLocker flightsLocker(&flightsLock);
+    auto it = flights.find(flight.getId());
+    if(it == flights.end())
+    {
+        flights.insert(flight.getId(), flight);
+    }
+    else
+    {
+        it.value() = flight;
+    }
+}
+
+void FlightsModel::sendUpdateFlightNotification(const Flight & flight)
+{
+    emit sendUpdateOneFlight(flight);
+}
+
+void FlightsModel::sendUpdateFlightNotification(const int id)
+{
+    QMutexLocker flightsLocker(&flightsLock);
+    auto it = flights.find(id);
+    if(it != flights.end())
+    {
+        emit sendUpdateOneFlight(it.value());
+    }
 }

@@ -4,6 +4,10 @@
 #include "flightsmodel.h"
 #include "simulatorthread.h"
 
+#include "netsender.h"
+#include "netreceiver.h"
+#include "commandscreator.h"
+#include "commandsparser.h"
 
 SignalsManager::SignalsManager(QObject *parent) : QObject(parent)
 {
@@ -13,12 +17,13 @@ SignalsManager::SignalsManager(QObject *parent) : QObject(parent)
 void SignalsManager::connectObjects(MainWindow & mainWindow, FlightsModel & flightsModel)
 {
     connect(&mainWindow, MainWindow::generate, &flightsModel, FlightsModel::onGenerate);
-    connect(&flightsModel, FlightsModel::ready, &mainWindow, MainWindow::onGenerationReady);
     connect(&mainWindow, MainWindow::alternative, &flightsModel, FlightsModel::onOptimise);
-    connect(&flightsModel, FlightsModel::alternativeRouteGenerated, &mainWindow, MainWindow::onAlternativeGenerated);
-    connect(&flightsModel, FlightsModel::alternativeRouteNotGenerated, &mainWindow, MainWindow::onAlternativeNotGenerated);
     connect(&mainWindow, MainWindow::applyAlternative, &flightsModel, FlightsModel::onApplyAlternativeRoute);
     connect(&mainWindow, MainWindow::cancelAlternative, &flightsModel, FlightsModel::onCancelAlternativeRoute);
+
+    connect(&flightsModel, FlightsModel::ready, &mainWindow, MainWindow::onGenerationReady);
+    connect(&flightsModel, FlightsModel::alternativeRouteGenerated, &mainWindow, MainWindow::onAlternativeGenerated);
+    connect(&flightsModel, FlightsModel::alternativeRouteNotGenerated, &mainWindow, MainWindow::onAlternativeNotGenerated);
 }
 
 void SignalsManager::connectObjects(MainWindow & mainWindow, SimulatorThread & simulator)
@@ -34,4 +39,72 @@ void SignalsManager::connectObjects(MainWindow & mainWindow, SimulatorThread & s
 void SignalsManager::connectObjects(FlightsModel & flightsModel, SimulatorThread & simulator)
 {
     connect(&flightsModel, FlightsModel::ready, &simulator, SimulatorThread::onStop, Qt::DirectConnection);
+}
+
+void SignalsManager::connectObjects(NetSender & netSender, NetReceiver & netReceiver)
+{
+    connect(&netSender, NetSender::send, &netReceiver, NetReceiver::onReceive);
+}
+
+void SignalsManager::connectObjects(CommandsCreator & commandsCreator, NetSender & netSender)
+{
+    connect(&commandsCreator, CommandsCreator::send, &netSender, NetSender::onSend);
+}
+
+void SignalsManager::connectObjects(NetReceiver & netReceiver, CommandsParser & commandsParser)
+{
+    connect(&netReceiver, NetReceiver::received, &commandsParser, CommandsParser::onReceivedCommand);
+}
+
+void SignalsManager::connectObjectsServer(CommandsParser & commandsParser, FlightsModel & flightsModel)
+{
+    connect(&commandsParser, CommandsParser::generateFlights, &flightsModel, FlightsModel::onGenerate);
+    connect(&commandsParser, CommandsParser::alternativeRequest, &flightsModel, FlightsModel::onOptimise);
+    connect(&commandsParser, CommandsParser::alternativeApply, &flightsModel, FlightsModel::onApplyAlternativeRoute);
+    connect(&commandsParser, CommandsParser::alternativeCancel, &flightsModel, FlightsModel::onCancelAlternativeRoute);
+}
+
+void SignalsManager::connectObjectsServer(FlightsModel & flightsModel, CommandsCreator & commandsCreator)
+{
+    connect(&flightsModel, FlightsModel::readyFlights, &commandsCreator, CommandsCreator::onFlightsReady);
+    connect(&flightsModel, FlightsModel::sendUpdateOneFlight, &commandsCreator, CommandsCreator::onUpdateOneFlight, Qt::DirectConnection);
+    connect(&flightsModel, FlightsModel::alternativeRouteGenerated, &commandsCreator, CommandsCreator::onAlternativeRouteGenerated);
+    connect(&flightsModel, FlightsModel::alternativeRouteNotGenerated, &commandsCreator, CommandsCreator::onAlternativeRouteNotGenerated);
+}
+
+void SignalsManager::connectObjectsServer(CommandsParser & commandsParser, SimulatorThread & simulator)
+{
+    connect(&commandsParser, CommandsParser::startGeneration, &simulator, SimulatorThread::onStart);
+    connect(&commandsParser, CommandsParser::pauseGeneration, &simulator, SimulatorThread::onPause, Qt::DirectConnection);
+    connect(&commandsParser, CommandsParser::halfSpeed, &simulator, SimulatorThread::onHalfSpeed, Qt::DirectConnection);
+    connect(&commandsParser, CommandsParser::normalSpeed, &simulator, SimulatorThread::onNormalSpeed, Qt::DirectConnection);
+    connect(&commandsParser, CommandsParser::doubleSpeed, &simulator, SimulatorThread::onDoubleSpeed, Qt::DirectConnection);
+}
+
+void SignalsManager::connectObjectsClient(CommandsParser & commandsParser, FlightsModel & flightsModel)
+{
+    connect(&commandsParser, CommandsParser::deleteAllFlights, &flightsModel, FlightsModel::onClearFlights);
+    connect(&commandsParser, CommandsParser::updateOneFlight, &flightsModel, FlightsModel::onUpdateOneFlight);
+    connect(&commandsParser, CommandsParser::alternativeApply, &flightsModel, FlightsModel::onApplyAlternativeRoute);
+    connect(&commandsParser, CommandsParser::alternativeCancel, &flightsModel, FlightsModel::onCancelAlternativeRoute);
+}
+
+void SignalsManager::connectObjectsClient(CommandsParser & commandsParser, MainWindow & mainWindow)
+{
+    connect(&commandsParser, CommandsParser::flightsReady, &mainWindow, MainWindow::onGenerationReady);
+    connect(&commandsParser, CommandsParser::alternativeRouteGenerated, &mainWindow, MainWindow::onAlternativeGenerated);
+    connect(&commandsParser, CommandsParser::alternativeRouteNotGenerated, &mainWindow, MainWindow::onAlternativeNotGenerated);
+}
+
+void SignalsManager::connectObjectsClient(MainWindow & mainWindow, CommandsCreator & commandsCreator)
+{
+    connect(&mainWindow, MainWindow::generate, &commandsCreator, CommandsCreator::onGenerateFlights);
+    connect(&mainWindow, MainWindow::run, &commandsCreator, CommandsCreator::onStartGeneration);
+    connect(&mainWindow, MainWindow::pause, &commandsCreator, CommandsCreator::onPauseGeneration);
+    connect(&mainWindow, MainWindow::halfSpeed, &commandsCreator, CommandsCreator::onSetHalfSpeed);
+    connect(&mainWindow, MainWindow::normalSpeed, &commandsCreator, CommandsCreator::onSetNormalSpeed);
+    connect(&mainWindow, MainWindow::doubleSpeed, &commandsCreator, CommandsCreator::onSetDoubleSpeed);
+    connect(&mainWindow, MainWindow::alternative, &commandsCreator, CommandsCreator::onAlternativeRouteRequest);
+    connect(&mainWindow, MainWindow::applyAlternative, &commandsCreator, CommandsCreator::onAlternativeRouteApply);
+    connect(&mainWindow, MainWindow::cancelAlternative, &commandsCreator, CommandsCreator::onAlternativeRouteCancel);
 }
