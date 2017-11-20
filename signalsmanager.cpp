@@ -9,6 +9,9 @@
 #include "commandscreator.h"
 #include "commandsparser.h"
 
+#include "simulatorserver.h"
+#include "simulatorclient.h"
+
 SignalsManager::SignalsManager(QObject *parent) : QObject(parent)
 {
 
@@ -53,7 +56,7 @@ void SignalsManager::connectObjects(CommandsCreator & commandsCreator, NetSender
 
 void SignalsManager::connectObjects(NetReceiver & netReceiver, CommandsParser & commandsParser)
 {
-    connect(&netReceiver, NetReceiver::received, &commandsParser, CommandsParser::onReceivedCommand);
+    connect(&netReceiver, SIGNAL(received(QByteArray*)), &commandsParser, SLOT(onReceivedCommand(QByteArray*)));
 }
 
 void SignalsManager::connectObjectsServer(CommandsParser & commandsParser, FlightsModel & flightsModel)
@@ -84,7 +87,7 @@ void SignalsManager::connectObjectsServer(CommandsParser & commandsParser, Simul
 void SignalsManager::connectObjectsClient(CommandsParser & commandsParser, FlightsModel & flightsModel)
 {
     connect(&commandsParser, CommandsParser::deleteAllFlights, &flightsModel, FlightsModel::onClearFlights);
-    connect(&commandsParser, CommandsParser::updateOneFlight, &flightsModel, FlightsModel::onUpdateOneFlight);
+    connect(&commandsParser, CommandsParser::updateOneFlight, &flightsModel, FlightsModel::onUpdateOneFlight, Qt::DirectConnection);
     connect(&commandsParser, CommandsParser::alternativeApply, &flightsModel, FlightsModel::onApplyAlternativeRoute);
     connect(&commandsParser, CommandsParser::alternativeCancel, &flightsModel, FlightsModel::onCancelAlternativeRoute);
 }
@@ -107,4 +110,24 @@ void SignalsManager::connectObjectsClient(MainWindow & mainWindow, CommandsCreat
     connect(&mainWindow, MainWindow::alternative, &commandsCreator, CommandsCreator::onAlternativeRouteRequest);
     connect(&mainWindow, MainWindow::applyAlternative, &commandsCreator, CommandsCreator::onAlternativeRouteApply);
     connect(&mainWindow, MainWindow::cancelAlternative, &commandsCreator, CommandsCreator::onAlternativeRouteCancel);
+}
+
+void SignalsManager::connectObjectsServer(CommandsCreator & commandsCreator, SimulatorServer & server)
+{
+    connect(&commandsCreator, SIGNAL(send(QByteArray*)), &server, SLOT(sendToClient(QByteArray*)), Qt::DirectConnection);
+}
+
+void SignalsManager::connectObjectsServer(CommandsParser & commandsParser, SimulatorServer & server)
+{
+    connect(&server, SIGNAL(receivedFromClient(QDataStream&)), &commandsParser, SLOT(onReceivedCommand(QDataStream&)), Qt::DirectConnection);
+}
+
+void SignalsManager::connectObjectsClient(CommandsCreator & commandsCreator, SimulatorClient & client)
+{
+    connect(&commandsCreator, SIGNAL(send(QByteArray*)), &client, SLOT(sendToServer(QByteArray*)), Qt::DirectConnection);
+}
+
+void SignalsManager::connectObjectsClient(CommandsParser & commandsParser, SimulatorClient & client)
+{
+    connect(&client, SIGNAL(receivedFromServer(QDataStream&)), &commandsParser, SLOT(onReceivedCommand(QDataStream&)), Qt::DirectConnection);
 }

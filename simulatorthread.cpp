@@ -1,6 +1,7 @@
 #include "simulatorthread.h"
 #include "simulator.h"
 #include "flightsmodel.h"
+#include "simulatorserver.h"
 
 #include <QThread>
 
@@ -13,14 +14,17 @@ SimulatorThread::SimulatorThread(FlightsModel &model, QObject *parent) :
 
 void SimulatorThread::run()
 {
-    QThread * simulatorThread = new QThread();
     Simulator * simulator = new Simulator(flightsModel);
-
+#if 0
+    QThread * simulatorThread = new QThread();
     simulator->moveToThread(simulatorThread);
 
     connect(simulator, SIGNAL(finished()), simulatorThread, SLOT(quit()));
     connect(simulator, SIGNAL(finished()), simulator, SLOT(deleteLater()));
     connect(simulatorThread, SIGNAL(finished()), simulatorThread, SLOT(deleteLater()));
+
+    simulatorThread->start();
+#endif
 
     connect(this, SimulatorThread::start, simulator, Simulator::onStart);
     connect(this, SimulatorThread::stop, simulator, Simulator::onStop, Qt::DirectConnection);
@@ -28,8 +32,6 @@ void SimulatorThread::run()
     connect(this, SimulatorThread::doubleSpeed, simulator, Simulator::onDoubleSpeed, Qt::DirectConnection);
     connect(this, SimulatorThread::halfSpeed, simulator, Simulator::onHalfSpeed, Qt::DirectConnection);
     connect(this, SimulatorThread::normalSpeed, simulator, Simulator::onNormalSpeed, Qt::DirectConnection);
-
-    simulatorThread->start();
 }
 
 void SimulatorThread::onStart()

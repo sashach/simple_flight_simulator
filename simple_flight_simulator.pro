@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
+QT       += network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -43,7 +44,9 @@ SOURCES += \
     netreceiver.cpp \
     netsender.cpp \
     commandscreator.cpp \
-    commandsparser.cpp
+    commandsparser.cpp \
+    simulatorserver.cpp \
+    simulatorclient.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -65,7 +68,9 @@ HEADERS += \
     netreceiver.h \
     netsender.h \
     commandscreator.h \
-    commandsparser.h
+    commandsparser.h \
+    simulatorserver.h \
+    simulatorclient.h
 
 FORMS += \
         mainwindow.ui

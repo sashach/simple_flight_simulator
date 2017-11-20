@@ -16,10 +16,19 @@ void CommandsParser::onReceivedCommand(QByteArray *data)
     delete data;
 }
 
+void CommandsParser::onReceivedCommand(QDataStream & in)
+{
+    parseCommand(in);
+}
+
 void CommandsParser::parseCommand(QByteArray * data)
 {
     QDataStream in(data, QIODevice::ReadOnly);
+    parseCommand(in);
+}
 
+void CommandsParser::parseCommand(QDataStream & in)
+{
     qint32 commandType;
     in >> commandType;
 
@@ -62,6 +71,11 @@ void CommandsParser::parseCommand(QByteArray * data)
         break;
     default:
         break;
+    }
+
+    if (!in.device()->atEnd())
+    {
+        parseCommand(in);
     }
 }
 

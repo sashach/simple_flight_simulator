@@ -12,6 +12,7 @@ public:
 
 private:
     void parseCommand(QByteArray * data);
+    void parseCommand(QDataStream & in);
     void processUpdateOneFlight(QDataStream &in);
     void processSetGeneratorSpeed(QDataStream &in);
 
@@ -34,6 +35,7 @@ signals:
 
 public slots:
     void onReceivedCommand(QByteArray * data);
+    void onReceivedCommand(QDataStream & in);
 };
 
 #endif // COMMANDSPARSER_H

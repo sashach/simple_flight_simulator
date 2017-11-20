@@ -168,10 +168,15 @@ void FlightsModel::sendUpdateFlightNotification(const Flight & flight)
 
 void FlightsModel::sendUpdateFlightNotification(const int id)
 {
-    QMutexLocker flightsLocker(&flightsLock);
-    auto it = flights.find(id);
-    if(it != flights.end())
+    Flight flightToSend;
     {
-        emit sendUpdateOneFlight(it.value());
+        QMutexLocker flightsLocker(&flightsLock);
+        auto it = flights.find(id);
+        if(it != flights.end())
+        {
+            flightToSend = it.value();
+        }
     }
+
+    emit sendUpdateOneFlight(flightToSend);
 }

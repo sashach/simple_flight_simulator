@@ -1,7 +1,6 @@
 #include "simulator.h"
 #include "flightsmodel.h"
 
-#include <iostream>
 #include <unistd.h>
 
 #include <QDateTime>

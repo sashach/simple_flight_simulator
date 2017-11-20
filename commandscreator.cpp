@@ -12,7 +12,7 @@ CommandsCreator::CommandsCreator(QObject *parent) : QObject(parent)
 void CommandsCreator::sendCommand(const qint32 commandType)
 {
     QByteArray  *data = new QByteArray();
-    QDataStream out(data, QIODevice::WriteOnly);
+    QDataStream out(data, QIODevice::ReadWrite);
 
     out << commandType;
 
@@ -39,7 +39,7 @@ void CommandsCreator::onFlightsReady(const QMap<int, Flight> &flights)
 void CommandsCreator::sendOneFlightData(const Flight & flight)
 {
     QByteArray  *data = new QByteArray();
-    QDataStream out(data, QIODevice::WriteOnly);
+    QDataStream out(data, QIODevice::ReadWrite);
 
     out << qint32(COMMAND_TYPE_UPDATE_ONE_FLIGHT);
 
@@ -82,7 +82,7 @@ void CommandsCreator::onUpdateOneFlight(const Flight & flight)
 void CommandsCreator::sendSetGeneratorSpeedCommand(const qint32 speed)
 {
     QByteArray  *data = new QByteArray();
-    QDataStream out(data, QIODevice::WriteOnly);
+    QDataStream out(data, QIODevice::ReadWrite);
 
     out << qint32(COMMAND_TYPE_SET_GENERATION_SPEED);
     out << speed;

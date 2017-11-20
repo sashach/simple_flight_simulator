@@ -13,6 +13,9 @@ class NetReceiver;
 class CommandsCreator;
 class CommandsParser;
 
+class SimulatorServer;
+class SimulatorClient;
+
 class SignalsManager : public QObject
 {
     Q_OBJECT
@@ -35,6 +38,12 @@ public:
     void connectObjectsClient(MainWindow & mainWindow, CommandsCreator & commandsCreator);
     void connectObjectsClient(CommandsParser & commandsParser, FlightsModel & flightsModel);
     void connectObjectsClient(CommandsParser & commandsParser, MainWindow & flightsModel);
+
+    void connectObjectsServer(CommandsCreator & commandsCreator, SimulatorServer & server);
+    void connectObjectsServer(CommandsParser & commandsParser, SimulatorServer & server);
+
+    void connectObjectsClient(CommandsCreator & commandsCreator, SimulatorClient & client);
+    void connectObjectsClient(CommandsParser & commandsParser, SimulatorClient & client);
 
 signals:
 
