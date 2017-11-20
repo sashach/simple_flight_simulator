@@ -13,7 +13,7 @@ class Simulator : public QObject
     Q_OBJECT
 public:
     explicit Simulator(FlightsModel & model, QObject *parent = nullptr);
-
+    ~Simulator();
     void doSomeWork();
 
 private:
@@ -37,6 +37,7 @@ private:
 
 signals:
     void start();
+    void finished();
 
 public slots:
     void process();

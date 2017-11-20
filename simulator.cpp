@@ -16,6 +16,11 @@ Simulator::Simulator(FlightsModel &model, QObject *parent) :
 {
 }
 
+Simulator::~Simulator()
+{
+    emit finished();
+}
+
 void Simulator::process()
 {
     const int loopDelay = 500000;
