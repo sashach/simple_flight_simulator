@@ -31,10 +31,10 @@ FlightsView::FlightsView(FlightsModel &model, QWidget *parent) :
     setWindowTitle("Flights View");
     flightsPO.onFlightsUpdated();
 
-    connect(&flightsPO, FlightsViewModel::flightsChanged, this, onModelUpdated);
-    connect(this, sizeChanged, &flightsPO, FlightsViewModel::onViewSizeChanged);
-    connect(this, mousePress, &flightsPO, FlightsViewModel::onMousePressed);
-    connect(&flightsPO, FlightsViewModel::showMetersFeetMenu, this, onShowMeterFeetMenu);
+    connect(&flightsPO, SIGNAL(flightsChanged()), this, SLOT(onModelUpdated()));
+    connect(this, SIGNAL(sizeChanged(int,int)), &flightsPO, SLOT(onViewSizeChanged(int,int)));
+    connect(this, SIGNAL(mousePress(int,int,QPoint)), &flightsPO, SLOT(onMousePressed(int,int,QPoint)));
+    connect(&flightsPO, SIGNAL(showMetersFeetMenu(QPoint)), this, SLOT(onShowMeterFeetMenu(QPoint)));
 }
 
 void FlightsView::resizeEvent(QResizeEvent*)
@@ -242,10 +242,10 @@ void FlightsView::onShowMeterFeetMenu(const QPoint &global)
 {
     QMenu menu(this);
     QAction * actMeters = new QAction("M", this);
-    connect(actMeters, QAction::triggered, &flightsPO, FlightsViewModel::onMetersSelected);
+    connect(actMeters, SIGNAL(triggered(bool)), &flightsPO, SLOT(onMetersSelected()));
 
     QAction * actFeet = new QAction("F", this);
-    connect(actFeet, QAction::triggered, &flightsPO, FlightsViewModel::onFeetSelected);
+    connect(actFeet, SIGNAL(triggered(bool)), &flightsPO, SLOT(onFeetSelected()));
 
     menu.addAction(actMeters);
     menu.addAction(actFeet);

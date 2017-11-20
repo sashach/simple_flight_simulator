@@ -9,8 +9,8 @@ FlightsViewModel::FlightsViewModel(FlightsModel &model, QObject *parent) :
     optimisedFlightExists(false),
     menuFlightId(0)
 {
-    connect(&flightsModel, FlightsModel::ready, this, onFlightsUpdated);
-    connect(&flightsModel, FlightsModel::updated, this, onFlightsUpdated);
+    connect(&flightsModel, SIGNAL(ready()), this, SLOT(onFlightsUpdated()));
+    connect(&flightsModel, SIGNAL(updated()), this, SLOT(onFlightsUpdated()));
 }
 
 void FlightsViewModel::onViewSizeChanged(const int width, const int height)

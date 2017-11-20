@@ -22,12 +22,12 @@ void SimulatorThread::run()
     connect(simulator, SIGNAL(finished()), simulator, SLOT(deleteLater()));
     connect(simulatorThread, SIGNAL(finished()), simulatorThread, SLOT(deleteLater()));
 
-    connect(this, SimulatorThread::start, simulator, Simulator::onStart);
-    connect(this, SimulatorThread::stop, simulator, Simulator::onStop, Qt::DirectConnection);
-    connect(this, SimulatorThread::pause, simulator, Simulator::onPause, Qt::DirectConnection);
-    connect(this, SimulatorThread::doubleSpeed, simulator, Simulator::onDoubleSpeed, Qt::DirectConnection);
-    connect(this, SimulatorThread::halfSpeed, simulator, Simulator::onHalfSpeed, Qt::DirectConnection);
-    connect(this, SimulatorThread::normalSpeed, simulator, Simulator::onNormalSpeed, Qt::DirectConnection);
+    connect(this, SIGNAL(start()), simulator, SLOT(onStart()));
+    connect(this, SIGNAL(stop()), simulator, SLOT(onStop()), Qt::DirectConnection);
+    connect(this, SIGNAL(pause()), simulator, SLOT(onPause()), Qt::DirectConnection);
+    connect(this, SIGNAL(doubleSpeed()), simulator, SLOT(onDoubleSpeed()), Qt::DirectConnection);
+    connect(this, SIGNAL(halfSpeed()), simulator, SLOT(onHalfSpeed()), Qt::DirectConnection);
+    connect(this, SIGNAL(normalSpeed()), simulator, SLOT(onNormalSpeed()), Qt::DirectConnection);
 
     simulatorThread->start();
 }
