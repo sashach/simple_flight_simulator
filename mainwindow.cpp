@@ -12,16 +12,16 @@ MainWindow::MainWindow(FlightsModel &model, QWidget *parent) :
 {
     ui->setupUi(this);
 
-    connect(ui->generateButton, QPushButton::pressed, this, MainWindow::onGenerate);
-    connect(ui->flightsViewButton, QPushButton::pressed, this, MainWindow::onFlightsView);
-    connect(ui->alternativeButton, QPushButton::pressed, this, MainWindow::onAlternative);
+    connect(ui->generateButton, SIGNAL(pressed()), this, SLOT(onGenerate()));
+    connect(ui->flightsViewButton, SIGNAL(pressed()), this, SLOT(onFlightsView()));
+    connect(ui->alternativeButton, SIGNAL(pressed()), this, SLOT(onAlternative()));
 
-    connect(ui->runButton, QPushButton::pressed, this, MainWindow::onRun);
-    connect(ui->pauseButton, QPushButton::pressed, this, MainWindow::onPause);
+    connect(ui->runButton, SIGNAL(pressed()), this, SLOT(onRun()));
+    connect(ui->pauseButton, SIGNAL(pressed()), this, SLOT(onPause()));
 
-    connect(ui->doubleSpeedButton, QRadioButton::pressed, this, MainWindow::onDoubleSpeed);
-    connect(ui->halfSpeedButton, QRadioButton::pressed, this, MainWindow::onHalfSpeed);
-    connect(ui->normalSpeedButton, QRadioButton::pressed, this, MainWindow::onNormalSpeed);
+    connect(ui->doubleSpeedButton, SIGNAL(pressed()), this, SLOT(onDoubleSpeed()));
+    connect(ui->halfSpeedButton, SIGNAL(pressed()), this, SLOT(onHalfSpeed()));
+    connect(ui->normalSpeedButton, SIGNAL(pressed()), this, SLOT(onNormalSpeed()));
 }
 
 MainWindow::~MainWindow()
