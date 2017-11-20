@@ -16,6 +16,8 @@ class CommandsParser;
 class SimulatorServer;
 class SimulatorClient;
 
+class Flight;
+
 class SignalsManager : public QObject
 {
     Q_OBJECT
@@ -46,8 +48,12 @@ public:
     void connectObjectsClient(CommandsParser & commandsParser, SimulatorClient & client);
 
 signals:
+    void send(QByteArray * data);
+    void receivedFromServer(QDataStream & in);
 
 public slots:
+    void sendToClient(QByteArray *data);
+    void onReceivedCommand(QDataStream & in);
 };
 
 #endif // SIGNALSMANAGER_H

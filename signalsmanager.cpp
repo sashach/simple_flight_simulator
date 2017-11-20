@@ -114,7 +114,8 @@ void SignalsManager::connectObjectsClient(MainWindow & mainWindow, CommandsCreat
 
 void SignalsManager::connectObjectsServer(CommandsCreator & commandsCreator, SimulatorServer & server)
 {
-    connect(&commandsCreator, SIGNAL(send(QByteArray*)), &server, SLOT(sendToClient(QByteArray*)), Qt::DirectConnection);
+    connect(&commandsCreator, SIGNAL(send(QByteArray*)), this, SLOT(sendToClient(QByteArray*)), Qt::DirectConnection);
+    connect(this, SIGNAL(send(QByteArray*)), &server, SLOT(sendToClient(QByteArray*)), Qt::DirectConnection);
 }
 
 void SignalsManager::connectObjectsServer(CommandsParser & commandsParser, SimulatorServer & server)
@@ -129,5 +130,16 @@ void SignalsManager::connectObjectsClient(CommandsCreator & commandsCreator, Sim
 
 void SignalsManager::connectObjectsClient(CommandsParser & commandsParser, SimulatorClient & client)
 {
-    connect(&client, SIGNAL(receivedFromServer(QDataStream&)), &commandsParser, SLOT(onReceivedCommand(QDataStream&)), Qt::DirectConnection);
+    connect(&client, SIGNAL(receivedFromServer(QDataStream&)), this, SLOT(onReceivedCommand(QDataStream&)), Qt::DirectConnection);
+    connect(this, SIGNAL(receivedFromServer(QDataStream&)), &commandsParser, SLOT(onReceivedCommand(QDataStream&)), Qt::DirectConnection);
+}
+
+void SignalsManager::sendToClient(QByteArray *data)
+{
+    emit send(data);
+}
+
+void SignalsManager::onReceivedCommand(QDataStream & in)
+{
+    emit receivedFromServer(in);
 }
