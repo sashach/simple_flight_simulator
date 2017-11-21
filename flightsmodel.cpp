@@ -1,7 +1,6 @@
 #include "flightsmodel.h"
 #include "flightsgenerator.h"
 #include "constants.h"
-#include "flightplanoptimiser.h"
 
 #include <QMutexLocker>
 
@@ -73,24 +72,41 @@ void FlightsModel::onUpdate()
 
 void FlightsModel::onOptimise()
 {
+    removeAlternativeRoute();
+
     optimisedFlightId = 1;
-    if(optimiseFlight())
+
+    Flight optimisedFlight;
     {
-        sendUpdateFlightNotification(OPTIMISER_FLIGHT_ID);
-        emit updated();
-        emit alternativeRouteGenerated();
+        QMutexLocker flightsLocker(&flightsLock);
+        auto it = flights.find(optimisedFlightId);
+        if(it != flights.end())
+        {
+            optimisedFlight = it.value();
+            optimisedFlight.setId(OPTIMISER_FLIGHT_ID);
+        }
     }
-    else
+    if(optimisedFlight.getId() == OPTIMISER_FLIGHT_ID)
     {
-        emit alternativeRouteNotGenerated();
+        emit optimiseFlight(optimisedFlight);
     }
 }
 
-bool FlightsModel::optimiseFlight()
+void FlightsModel::onFlightOptimised(const Flight &flight)
 {
-    FlightPlanOptimiser optimiser;
-    QMutexLocker flightsLocker(&flightsLock);
-    return optimiser.createOptimisedCopy(flights, optimisedFlightId, OPTIMISER_FLIGHT_ID);
+    {
+        QMutexLocker flightsLocker(&flightsLock);
+        flights.insert(OPTIMISER_FLIGHT_ID, flight);
+    }
+
+    sendUpdateFlightNotification(OPTIMISER_FLIGHT_ID);
+    emit updated();
+    emit alternativeRouteGenerated();
+}
+
+void FlightsModel::onFlightNotOptimised()
+{
+    emit alternativeRouteNotGenerated();
 }
 
 void FlightsModel::applyAlternativeRoute()

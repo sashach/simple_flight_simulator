@@ -4,8 +4,10 @@
 #include "flightsmodel.h"
 #include "simulatorthread.h"
 #include "signalsmanager.h"
+#include "directservice.h"
 
 //#define STANDALONE_VERSION
+//#define WITH_TCP
 
 #ifndef STANDALONE_VERSION
 #include "netsender.h"
@@ -33,6 +35,9 @@ int main(int argc, char *argv[])
     signalsManager.connectObjects(mainWindow, flightsModel);
     signalsManager.connectObjects(mainWindow, simulator);
 
+    DirectService directService;
+    signalsManager.connectObjects(flightsModel, directService);
+
     simulator.run();
     int res = a.exec();
 #else
@@ -43,60 +48,72 @@ int main(int argc, char *argv[])
         mode = argv[1];
     }
 
+#ifndef WITH_TCP
     const int port = 23235;
 
     SimulatorServer server(port);
     SimulatorClient client("localhost", port);
-
-    SignalsManager signalsManager;
+#endif
 
     CommandsCreator commandsCreator;
     CommandsParser commandsParser;
 
     NetReceiver netReceiver;
     NetSender netSender;
-//    signalsManager.connectObjects(netSender, netReceiver);
+
+    SignalsManager signalsManager;
 
     signalsManager.connectObjects(commandsCreator, netSender);
     signalsManager.connectObjects(netReceiver, commandsParser);
+#ifndef WITH_TCP
+    signalsManager.connectObjects(netSender, netReceiver);
+#endif
 
     int res = 0;
+#ifdef WITH_TCP
     if(mode == "server")
     {
         server.run();
 
-        FlightsModel simulatorFlightModel;
-        SimulatorThread simulator(simulatorFlightModel);
+//        signalsManager.connectObjectsServer(commandsCreator, server);
+//        signalsManager.connectObjectsServer(commandsParser, server);
+#endif
 
-        signalsManager.connectObjectsServer(commandsParser, simulatorFlightModel);
-        signalsManager.connectObjectsServer(simulatorFlightModel, commandsCreator);
-        signalsManager.connectObjectsServer(commandsParser, simulator);
+        DirectService directService;
+        signalsManager.connectObjectsServer(directService, commandsCreator);
+        signalsManager.connectObjectsServer(commandsParser, directService);
+//        signalsManager.connectObjectsServer(commandsParser, simulator);
 
-        signalsManager.connectObjectsServer(commandsCreator, server);
-        signalsManager.connectObjectsServer(commandsParser, server);
-
-        simulator.run();
-
+#if WITH_TCP
         res = a.exec();
     }
     else if(mode == "client")
     {
-        signalsManager.connectObjectsClient(commandsCreator, client);
-        signalsManager.connectObjectsClient(commandsParser, client);
-
         client.run();
+
+//        signalsManager.connectObjectsClient(commandsCreator, client);
+//        signalsManager.connectObjectsClient(commandsParser, client);
+#endif
 
         FlightsModel flightsModel;
         MainWindow mainWindow(flightsModel);
         mainWindow.setWindowFlags(Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
         mainWindow.show();
 
-        signalsManager.connectObjectsClient(mainWindow, commandsCreator);
+        signalsManager.connectObjectsClient(flightsModel, commandsCreator);
         signalsManager.connectObjectsClient(commandsParser, flightsModel);
         signalsManager.connectObjectsClient(commandsParser, mainWindow);
 
+        SimulatorThread simulator(flightsModel);
+        signalsManager.connectObjects(mainWindow, flightsModel);
+        signalsManager.connectObjects(mainWindow, simulator);
+
+        simulator.run();
+
         res = a.exec();
+#if WITH_TCP
     }
+#endif
 
 #endif
 

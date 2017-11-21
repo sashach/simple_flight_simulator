@@ -13,13 +13,14 @@ public:
 private:
     void parseCommand(QByteArray * data);
     void parseCommand(QDataStream & in);
-    void processUpdateOneFlight(QDataStream &in);
+    void processUpdateOneFlight(QDataStream &in, qint32 commandType);
     void processSetGeneratorSpeed(QDataStream &in);
 
 signals:
     void generateFlights();
     void deleteAllFlights();
     void updateOneFlight(const Flight & flight);
+    void optimiseFlight(const Flight & flight);
     void flightsReady();
     void startGeneration();
     void pauseGeneration();

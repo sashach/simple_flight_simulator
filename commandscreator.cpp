@@ -30,18 +30,18 @@ void CommandsCreator::onFlightsReady(const QMap<int, Flight> &flights)
 
     for(auto it = flights.begin(); it != flights.end(); ++it)
     {
-        sendOneFlightData(it.value());
+        sendOneFlightData(it.value(), COMMAND_TYPE_UPDATE_ONE_FLIGHT);
     }
 
     sendCommand(COMMAND_TYPE_FLIGHTS_READY);
 }
 
-void CommandsCreator::sendOneFlightData(const Flight & flight)
+void CommandsCreator::sendOneFlightData(const Flight & flight, qint32 commandType)
 {
     QByteArray  *data = new QByteArray();
     QDataStream out(data, QIODevice::ReadWrite);
 
-    out << qint32(COMMAND_TYPE_UPDATE_ONE_FLIGHT);
+    out << commandType;
 
     out << qint32(flight.getId());
     out << QString(flight.getAircraftId().c_str());
@@ -76,7 +76,12 @@ void CommandsCreator::onPauseGeneration()
 
 void CommandsCreator::onUpdateOneFlight(const Flight & flight)
 {
-    sendOneFlightData(flight);
+    sendOneFlightData(flight, COMMAND_TYPE_UPDATE_ONE_FLIGHT);
+}
+
+void CommandsCreator::onSendFlightToOptimiser(const Flight & flight)
+{
+    sendOneFlightData(flight, COMMAND_TYPE_SEND_FLIGHT_TO_OPTIMISER);
 }
 
 void CommandsCreator::sendSetGeneratorSpeedCommand(const qint32 speed)

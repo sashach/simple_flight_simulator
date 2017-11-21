@@ -46,7 +46,8 @@ SOURCES += \
     commandscreator.cpp \
     commandsparser.cpp \
     simulatorserver.cpp \
-    simulatorclient.cpp
+    simulatorclient.cpp \
+    directservice.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -70,7 +71,8 @@ HEADERS += \
     commandscreator.h \
     commandsparser.h \
     simulatorserver.h \
-    simulatorclient.h
+    simulatorclient.h \
+    directservice.h
 
 FORMS += \
         mainwindow.ui

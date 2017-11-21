@@ -34,7 +34,6 @@ private:
 
     void clearFlights();
     void generateFlights();
-    bool optimiseFlight();
     int generateFlightId();
 
     void applyAlternativeRoute();
@@ -49,10 +48,12 @@ signals:
     void ready();
     void run();
     void pause();
+    void alternativeRouteRequest();
     void alternativeRouteGenerated();
     void alternativeRouteNotGenerated();
     void readyFlights(const QMap <int, Flight> & flights);
     void sendUpdateOneFlight(const Flight & flight);
+    void optimiseFlight(const Flight & flight);
 
 public slots:
     void onGenerate();
@@ -62,6 +63,8 @@ public slots:
     void onCancelAlternativeRoute();
     void onClearFlights();
     void onUpdateOneFlight(const Flight & flight);
+    void onFlightOptimised(const Flight & flight);
+    void onFlightNotOptimised();
 };
 
 #endif // FLIGHTSMODEL_H

@@ -48,3 +48,8 @@ bool FlightPlanOptimiser::optimiseRoute(Flight & flight)
     }
     return res;
 }
+
+bool FlightPlanOptimiser::optimiseFlight(Flight & flight)
+{
+    return optimiseRoute(flight);
+}

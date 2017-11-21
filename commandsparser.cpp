@@ -40,7 +40,8 @@ void CommandsParser::parseCommand(QDataStream & in)
         emit deleteAllFlights();
         break;
     case COMMAND_TYPE_UPDATE_ONE_FLIGHT:
-        processUpdateOneFlight(in);
+    case COMMAND_TYPE_SEND_FLIGHT_TO_OPTIMISER:
+        processUpdateOneFlight(in, commandType);
         break;
     case COMMAND_TYPE_FLIGHTS_READY:
         emit flightsReady();
@@ -79,7 +80,7 @@ void CommandsParser::parseCommand(QDataStream & in)
     }
 }
 
-void CommandsParser::processUpdateOneFlight(QDataStream & in)
+void CommandsParser::processUpdateOneFlight(QDataStream & in, qint32 commandType)
 {
     qint32 id;
     QString aircraftId;
@@ -107,7 +108,15 @@ void CommandsParser::processUpdateOneFlight(QDataStream & in)
 
         flight.addWayPoint(wayPoint);
     }
-    emit updateOneFlight(flight);
+
+    if(commandType == COMMAND_TYPE_SEND_FLIGHT_TO_OPTIMISER)
+    {
+        emit optimiseFlight(flight);
+    }
+    else
+    {
+        emit updateOneFlight(flight);
+    }
 }
 
 void CommandsParser::processSetGeneratorSpeed(QDataStream &in)

@@ -24,20 +24,26 @@ void Simulator::process()
 {
     const int loopDelay = 500000;
     const qint64 simulationTimerStep = 500;
+
+    bool isPaused = paused;
+    bool isEnabled = enabled;
+
     while(true)
     {
         {
             QMutexLocker controlLocker(&controlLock);
-
-            if(!enabled)
-            {
-                break;
-            }
-            if(paused)
-            {
-                usleep(loopDelay);
-                continue;
-            }
+            isPaused = paused;
+            isEnabled = enabled;
+        }
+        if(!isEnabled)
+        {
+            break;
+        }
+        if(isPaused)
+        {
+            qDebug() << "paused";
+            usleep(loopDelay);
+            continue;
         }
 
         simulatorTime = simulatorTime.addMSecs(simulationSpeed * simulationTimerStep);

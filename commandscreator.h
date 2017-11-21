@@ -14,7 +14,7 @@ public:
 
 private:
     void sendCommand(const qint32 commandType);
-    void sendOneFlightData(const Flight & flight);
+    void sendOneFlightData(const Flight & flight, qint32 commandType);
     void sendSetGeneratorSpeedCommand(const qint32 speed);
 
 signals:
@@ -26,6 +26,7 @@ public slots:
     void onStartGeneration();
     void onPauseGeneration();
     void onUpdateOneFlight(const Flight & flight);
+    void onSendFlightToOptimiser(const Flight & flight);
     void onSetHalfSpeed();
     void onSetNormalSpeed();
     void onSetDoubleSpeed();
