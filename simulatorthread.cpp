@@ -15,7 +15,6 @@ SimulatorThread::SimulatorThread(FlightsModel &model, QObject *parent) :
 void SimulatorThread::run()
 {
     Simulator * simulator = new Simulator(flightsModel);
-#if 0
     QThread * simulatorThread = new QThread();
     simulator->moveToThread(simulatorThread);
 
@@ -24,7 +23,6 @@ void SimulatorThread::run()
     connect(simulatorThread, SIGNAL(finished()), simulatorThread, SLOT(deleteLater()));
 
     simulatorThread->start();
-#endif
 
     connect(this, SIGNAL(start()), simulator, SLOT(onStart()));
     connect(this, SIGNAL(stop()), simulator, SLOT(onStop()), Qt::DirectConnection);
