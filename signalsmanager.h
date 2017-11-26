@@ -44,6 +44,13 @@ public:
     void connectObjectsClient(FlightsModel & flightsModel, CommandsCreator & commandsCreator);
     void connectObjectsClient(CommandsParser & commandsParser, FlightsModel & flightsModel);
 
+    void connectObjectsServer(CommandsCreator & commandsCreator, SimulatorServer & simulatorServer);
+    void connectObjectsServer(SimulatorServer & simulatorServer, CommandsParser & commandsParser);
+
+    void connectObjectsClient(CommandsCreator & commandsCreator, SimulatorClient & simulatorClient);
+    void connectObjectsClient(SimulatorClient & simulatorClient, CommandsParser & commandsParser);
+    void connectObjectsClient(FlightsModel & flightsModel, SimulatorClient &simulatorClient);
+
 signals:
     void send(QByteArray * data);
     void receivedFromServer(QDataStream & in);

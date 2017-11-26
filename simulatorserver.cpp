@@ -34,6 +34,7 @@ void SimulatorServer::run()
         return;
     }
     connect(tcpServer, SIGNAL(newConnection()), this, SLOT(slotNewConnection()));
+    qDebug() << "Server started";
 }
 
 void SimulatorServer::slotNewConnection()
@@ -41,6 +42,7 @@ void SimulatorServer::slotNewConnection()
     clientSocket = tcpServer->nextPendingConnection();
     connect(clientSocket, SIGNAL(disconnected()), clientSocket, SLOT(deleteLater()), Qt::DirectConnection);
     connect(clientSocket, SIGNAL(readyRead()), this, SLOT(slotReadClient()), Qt::DirectConnection);
+    qDebug() << "Nect client connected";
 }
 
 void SimulatorServer::slotReadClient()
@@ -61,7 +63,6 @@ void SimulatorServer::slotReadClient()
     {
         qDebug() << "Got " << in.device()->size() << " bytes from client";
     }
-//    QDataStream data(in.device());
     emit receivedFromClient(in);
 }
 

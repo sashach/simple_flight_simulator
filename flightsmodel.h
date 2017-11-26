@@ -54,6 +54,7 @@ signals:
     void readyFlights(const QMap <int, Flight> & flights);
     void sendUpdateOneFlight(const Flight & flight);
     void optimiseFlight(const Flight & flight);
+    void connectToServer();
 
 public slots:
     void onGenerate();

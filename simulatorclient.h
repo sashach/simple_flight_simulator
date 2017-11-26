@@ -21,8 +21,10 @@ private:
 
 signals:
     void receivedFromServer(QDataStream & in);
+    void destroySocket(QObject *parent);
 
 public slots:
+    void runClient();
 
 private slots:
     void slotReadyRead();

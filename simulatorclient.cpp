@@ -7,6 +7,7 @@
 #include <QDataStream>
 #include <QDebug>
 
+
 SimulatorClient::SimulatorClient(const QString &_host, int _port, QObject *parent) :
     QObject(parent),
     tcpSocket(nullptr),
@@ -26,6 +27,11 @@ void SimulatorClient::run()
     connect(tcpSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(slotError(QAbstractSocket::SocketError)), Qt::DirectConnection);
 }
 
+void SimulatorClient::runClient()
+{
+    run();
+}
+
 void SimulatorClient::slotReadyRead()
 {
     qDebug() << "Bytes available " << tcpSocket->bytesAvailable();
@@ -38,7 +44,6 @@ void SimulatorClient::slotReadyRead()
     {
         qDebug() << "Got " << in.device()->size() << " bytes from server";
     }
-//    QDataStream data(in.device());
     emit receivedFromServer(in);
 }
 

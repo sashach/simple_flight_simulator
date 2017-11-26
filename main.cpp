@@ -7,7 +7,7 @@
 #include "directservice.h"
 
 //#define STANDALONE_VERSION
-//#define WITH_TCP
+#define WITH_TCP
 
 #ifndef STANDALONE_VERSION
 #include "netsender.h"
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
         mode = argv[1];
     }
 
-#ifndef WITH_TCP
+#ifdef WITH_TCP
     const int port = 23235;
 
     SimulatorServer server(port);
@@ -75,24 +75,23 @@ int main(int argc, char *argv[])
     {
         server.run();
 
-//        signalsManager.connectObjectsServer(commandsCreator, server);
-//        signalsManager.connectObjectsServer(commandsParser, server);
+        signalsManager.connectObjectsServer(commandsCreator, server);
+        signalsManager.connectObjectsServer(server, commandsParser);
 #endif
 
         DirectService directService;
         signalsManager.connectObjectsServer(directService, commandsCreator);
         signalsManager.connectObjectsServer(commandsParser, directService);
-//        signalsManager.connectObjectsServer(commandsParser, simulator);
 
-#if WITH_TCP
+#ifdef WITH_TCP
         res = a.exec();
     }
     else if(mode == "client")
     {
-        client.run();
+//        client.run();
 
-//        signalsManager.connectObjectsClient(commandsCreator, client);
-//        signalsManager.connectObjectsClient(commandsParser, client);
+        signalsManager.connectObjectsClient(commandsCreator, client);
+        signalsManager.connectObjectsClient(client, commandsParser);
 #endif
 
         FlightsModel flightsModel;
@@ -103,6 +102,7 @@ int main(int argc, char *argv[])
         signalsManager.connectObjectsClient(flightsModel, commandsCreator);
         signalsManager.connectObjectsClient(commandsParser, flightsModel);
         signalsManager.connectObjectsClient(commandsParser, mainWindow);
+        signalsManager.connectObjectsClient(flightsModel, client);
 
         SimulatorThread simulator(flightsModel);
         signalsManager.connectObjects(mainWindow, flightsModel);
@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
         simulator.run();
 
         res = a.exec();
-#if WITH_TCP
+#ifdef WITH_TCP
     }
 #endif
 

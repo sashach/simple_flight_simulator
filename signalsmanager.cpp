@@ -108,3 +108,28 @@ void SignalsManager::connectObjectsServer(DirectService & directService, Command
     connect(&directService, SIGNAL(alternativeRouteGenerated()), &commandsCreator, SLOT(onAlternativeRouteGenerated()));
     connect(&directService, SIGNAL(alternativeRouteNotGenerated()), &commandsCreator, SLOT(onAlternativeRouteNotGenerated()));
 }
+
+void SignalsManager::connectObjectsServer(CommandsCreator & commandsCreator, SimulatorServer & simulatorServer)
+{
+    connect(&commandsCreator, SIGNAL(send(QByteArray*)), &simulatorServer, SLOT(sendToClient(QByteArray*)));
+}
+
+void SignalsManager::connectObjectsServer(SimulatorServer & simulatorServer, CommandsParser & commandsParser)
+{
+    connect(&simulatorServer, SIGNAL(receivedFromClient(QDataStream&)), &commandsParser, SLOT(onReceivedCommand(QDataStream&)));
+}
+
+void SignalsManager::connectObjectsClient(CommandsCreator & commandsCreator, SimulatorClient & simulatorClient)
+{
+    connect(&commandsCreator, SIGNAL(send(QByteArray*)), &simulatorClient, SLOT(sendToServer(QByteArray*)));
+}
+
+void SignalsManager::connectObjectsClient(SimulatorClient & simulatorClient, CommandsParser & commandsParser)
+{
+    connect(&simulatorClient, SIGNAL(receivedFromServer(QDataStream&)), &commandsParser, SLOT(onReceivedCommand(QDataStream&)));
+}
+
+void SignalsManager::connectObjectsClient(FlightsModel & flightsModel, SimulatorClient & simulatorClient)
+{
+    connect(&flightsModel, SIGNAL(connectToServer()), &simulatorClient, SLOT(runClient()));
+}

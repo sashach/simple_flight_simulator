@@ -72,6 +72,8 @@ void FlightsModel::onUpdate()
 
 void FlightsModel::onOptimise()
 {
+    emit connectToServer();
+
     removeAlternativeRoute();
 
     optimisedFlightId = 1;

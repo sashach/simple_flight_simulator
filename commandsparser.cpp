@@ -102,7 +102,7 @@ void CommandsParser::processUpdateOneFlight(QDataStream & in, qint32 commandType
         in >> wayPointName >> x >> y >> h >> passed >> mandatory;
 
         WayPoint wayPoint(x, y, h);
-        wayPoint.setName(aircraftId.toUtf8().constData());
+        wayPoint.setName(wayPointName.toUtf8().constData());
         wayPoint.setPassed(passed);
         wayPoint.setMandatory(mandatory);
 
